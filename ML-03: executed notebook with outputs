@@ -1,0 +1,590 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell00"
+      },
+      "source": [
+        "# ML-03 — Frame Your Lane as an ML Task\n",
+        "\n",
+        "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Saad-Imran-Toori/flyrank-ml-internship/blob/main/work/notebooks/w02_ml_task_framing.ipynb?flush_cache=true)\n",
+        "\n",
+        "This skeleton is yours to fill. Work the sections **in order** — each one has a one-line hint. Simple words, honest numbers.\n",
+        "\n",
+        "> Working with an AI assistant? Tell it to read `skills/README.md` first and load the one skill this assignment names on its card.\n",
+        "\n",
+        "**My lane (locked in ML-02):** Lane 4 — CTR / Engagement Opportunity Scoring.\n",
+        "**My question:** which visible pages under-capture clicks compared with similar pages, and should an editor review first?\n"
+      ],
+      "id": "cell00"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell01"
+      },
+      "source": [
+        "## 1. My lane as an ML task (type)\n",
+        "\n",
+        "*Classification, clustering, ranking, or scoring — which one, and why?*\n",
+        "\n",
+        "**Task type: ranking / scoring** — powered underneath by a supervised **regression**.\n",
+        "\n",
+        "My lane asks \"which pages first?\", not \"is this page good or bad?\". That wording matters. An editor\n",
+        "cannot review 16,726 pages; they can review a few dozen a week — at 50 a week the backlog is 335\n",
+        "weeks long. So the only output anybody can act on is an **ordered queue**, and the thing I am really\n",
+        "being judged on is what sits at the top of it.\n",
+        "A yes/no classification would hand back thousands of \"yes\" pages and solve nothing, because it never\n",
+        "answers the actual question — *which* yes goes first.\n",
+        "\n",
+        "The scoring works in two steps:\n",
+        "\n",
+        "1. **Learn what is normal.** A regression model predicts the CTR a page *like this one* would\n",
+        "   normally get, given what was true about it before anyone clicked: its search position, how much\n",
+        "   volume it gets, its intent, its content type, its freshness. Call that **expected CTR**.\n",
+        "2. **Rank by the gap.** The opportunity score is the **shortfall** — how far the page's actual,\n",
+        "   measured CTR sits *below* that expectation. Biggest shortfall goes to the top of the queue.\n",
+        "\n",
+        "So it is a scoring task in shape, a regression in mechanism, and a ranking in how it gets used.\n",
+        "\n",
+        "The code below shows why ranking is the right shape: the candidate pool is far larger than any\n",
+        "realistic review capacity, so ordering *is* the product.\n"
+      ],
+      "id": "cell01"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 17,
+      "metadata": {
+        "id": "cell02",
+        "outputId": "af6113f9-1d98-4764-b1c5-469a4fac0b34",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "loaded 30,000 rows x 44 columns\n",
+            "\n",
+            "All pages in the slice            : 30,000\n",
+            "In scope (position data + >=500 impr) : 16,726\n",
+            "\n",
+            "At ~50 reviews/week, reviewing every in-scope page would take 335 weeks.\n",
+            "-> Capacity is the binding constraint, so the useful output is an ORDER,\n",
+            "   not a yes/no flag. That makes this a RANKING / SCORING task.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# This cell is for CODE (numbers, a query, a check).\n",
+        "import os\n",
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "\n",
+        "CSV_PATH = \"data/raw/content_refresh_anonymized.csv\"\n",
+        "RAW_URL = (\"https://raw.githubusercontent.com/Saad-Imran-Toori/\"\n",
+        "           \"flyrank-ml-internship/main/data/raw/content_refresh_anonymized.csv\")\n",
+        "\n",
+        "# Local clone: walk up until the data folder appears.\n",
+        "_start = os.getcwd()\n",
+        "while not os.path.isdir(\"data/raw\") and os.getcwd() != \"/\":\n",
+        "    os.chdir(\"..\")\n",
+        "\n",
+        "# Colab opens only the .ipynb, not the repo -> fetch the file straight from GitHub.\n",
+        "if not os.path.exists(CSV_PATH):\n",
+        "    os.chdir(_start)\n",
+        "    os.makedirs(\"data/raw\", exist_ok=True)\n",
+        "    import urllib.request\n",
+        "    urllib.request.urlretrieve(RAW_URL, CSV_PATH)\n",
+        "\n",
+        "df = pd.read_csv(CSV_PATH)\n",
+        "print(f\"loaded {len(df):,} rows x {df.shape[1]} columns\\n\")\n",
+        "\n",
+        "# My lane only makes sense for pages that are actually VISIBLE in search,\n",
+        "# and only where CTR is stable enough to trust (volume floor).\n",
+        "FLOOR = 500\n",
+        "scope = df[(df[\"avg_position\"] > 0) & (df[\"impressions_90d\"] >= FLOOR)].copy()\n",
+        "\n",
+        "print(f\"All pages in the slice            : {len(df):,}\")\n",
+        "print(f\"In scope (position data + >={FLOOR} impr) : {len(scope):,}\")\n",
+        "\n",
+        "CAPACITY = 50  # pages an editor could realistically review per week\n",
+        "print(f\"\\nAt ~{CAPACITY} reviews/week, reviewing every in-scope page would take \"\n",
+        "      f\"{len(scope)/CAPACITY:,.0f} weeks.\")\n",
+        "print(\"-> Capacity is the binding constraint, so the useful output is an ORDER,\")\n",
+        "print(\"   not a yes/no flag. That makes this a RANKING / SCORING task.\")\n"
+      ],
+      "id": "cell02"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell03"
+      },
+      "source": [
+        "## 2. Target or proxy\n",
+        "\n",
+        "*What would you predict? Where does that label come from — observed outcome or a defined rule?*\n",
+        "\n",
+        "There are two different quantities here and it matters that I keep them separate.\n",
+        "\n",
+        "**What the model predicts (the learning target): `ctr` — an observed measurement.**\n",
+        "`ctr` is computed straight from two counted facts, `clicks_90d / impressions_90d × 100`. Nobody\n",
+        "decided it; a measurement system recorded it. The code below re-derives it from the raw counts and\n",
+        "confirms the two agree to within rounding. That satisfies the rule that matters most in this\n",
+        "framework: **the target must be observed, not defined.**\n",
+        "\n",
+        "**What the ranking uses (the score): the shortfall, `expected_ctr − actual_ctr`.**\n",
+        "This is derived, but it is derived from a *learned* expectation plus an *observed* value — not from\n",
+        "a threshold I invented. That is the important difference from my Week-1 draft, where I ranked pages\n",
+        "by \"CTR below the median of its position tier\". That version made my own arithmetic the target, so\n",
+        "any model trained on it would just be learning to reproduce my rule — a circular result that looks\n",
+        "accurate and discovers nothing. Making expected CTR a *learned* quantity is what breaks the circle.\n",
+        "\n",
+        "**The honest gap I have to name.** This dataset contains no observed label for \"reviewing this page\n",
+        "turned out to be worth it\". Nobody edited a title, logged it, and recorded what happened. So\n",
+        "\"deserves review\" is a **proxy**, not a measured outcome. I cannot pretend otherwise, and it has two\n",
+        "consequences I carry through the whole project: it shapes how I measure success (Section 3), and it\n",
+        "caps what I am allowed to claim — **decision-support and directional**, never causal.\n",
+        "\n",
+        "**Columns that can never be features:** `trend_direction`, `trend_pct` and `is_declining_label` are\n",
+        "the starter pipeline's own label chain, so using them would leak the answer into the inputs.\n",
+        "`content_id` and `client_id` are pseudonyms — good for grouping and splitting, never features.\n"
+      ],
+      "id": "cell03"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 18,
+      "metadata": {
+        "id": "cell04",
+        "outputId": "13d7e1de-36aa-4b5f-a5aa-d8bacbd2b6c0",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "ctr vs clicks/impressions*100 -> max abs difference: 0.005 (rounding only)\n",
+            "=> ctr is a MEASURED quantity from observed counts, not a rule output.\n",
+            "\n",
+            "ctr median in scope: 0.17%   (reminder: ctr is a x100 percentage, 0.76 = 0.76%)\n",
+            "\n",
+            "Never features here (rule-derived / label source): ['trend_direction', 'trend_pct', 'is_declining_label']\n",
+            "IDs (content_id, client_id) are pseudonyms: grouping and splitting only.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# This cell is for CODE (numbers, a query, a check).\n",
+        "# Check 1: is my learning target OBSERVED, or defined by somebody's rule?\n",
+        "chk = scope.copy()\n",
+        "chk[\"ctr_recomputed\"] = chk[\"clicks_90d\"] / chk[\"impressions_90d\"] * 100\n",
+        "gap = (chk[\"ctr\"] - chk[\"ctr_recomputed\"]).abs()\n",
+        "print(\"ctr vs clicks/impressions*100 -> max abs difference:\", round(gap.max(), 4),\n",
+        "      \"(rounding only)\")\n",
+        "print(\"=> ctr is a MEASURED quantity from observed counts, not a rule output.\\n\")\n",
+        "\n",
+        "print(f\"ctr median in scope: {scope['ctr'].median():.2f}%   \"\n",
+        "      f\"(reminder: ctr is a x100 percentage, 0.76 = 0.76%)\")\n",
+        "\n",
+        "# Check 2: columns I must never use as features (they are the label's source).\n",
+        "BANNED_AS_FEATURES = [\"trend_direction\", \"trend_pct\", \"is_declining_label\"]\n",
+        "print(\"\\nNever features here (rule-derived / label source):\", BANNED_AS_FEATURES)\n",
+        "print(\"IDs (content_id, client_id) are pseudonyms: grouping and splitting only.\")\n"
+      ],
+      "id": "cell04"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell05"
+      },
+      "source": [
+        "## 3. Success metric\n",
+        "\n",
+        "*One metric you can defend. What number means 'good'?*\n",
+        "\n",
+        "I am naming the metric now, before any model exists, because a definition of \"good\" written after\n",
+        "seeing results always flatters the results.\n",
+        "\n",
+        "**Primary — is the expectation any good? Mean Absolute Error (MAE), in percentage points, on a\n",
+        "client-holdout split.** I group the train/test split by `client_id` (GroupKFold), so the model is\n",
+        "scored on clients it has never seen. That is the honest test: pages inside one client share a\n",
+        "template, a brand and an audience, so a random row split would let the model memorise the client\n",
+        "rather than learn the pattern.\n",
+        "\n",
+        "MAE is the right unit here because the shortfall I care about *is* a difference in percentage\n",
+        "points, so the error is measured in exactly the quantity the decision is made in — and unlike RMSE\n",
+        "it is not dominated by a handful of extreme pages.\n",
+        "\n",
+        "**The number to beat is computed in the code below, today, with no model at all:** the MAE of the\n",
+        "Week-1 fixed rule (expected CTR = median CTR of the page's own position tier). If a trained model\n",
+        "cannot beat that on held-out clients, the model has not earned its place and I keep the rule and\n",
+        "say so in the paper.\n",
+        "\n",
+        "**What the baseline actually scored — and why it is smaller than I expected.** The tier rule lands\n",
+        "at **MAE = 0.185 pp**, against **0.196 pp** for simply predicting one global median for every page.\n",
+        "That is an improvement of only **5.6%**. Knowing a page's position tier, on this slice, barely tells\n",
+        "you more than knowing nothing at all.\n",
+        "\n",
+        "I am not going to dress that up, because it cuts in a useful direction: it is direct evidence that\n",
+        "**a position-only rule is too blunt for this lane.** The whole premise of my Week-1 draft was that\n",
+        "position tier defines a fair expectation, and the data says it mostly does not. That is exactly the\n",
+        "gap a multi-signal model exists to fill.\n",
+        "\n",
+        "Two honest caveats about the magnitude. CTR in this slice is very low — the in-scope median is\n",
+        "**0.17%** — so every one of these errors is small in absolute terms; what matters is the comparison\n",
+        "between methods, not the size of the number. And a low bar is not automatically an easy win: with so\n",
+        "little spread to exploit, a model that clears 0.185 pp by a trivial margin has not really earned\n",
+        "anything either. I will judge the improvement, not just the direction of it.\n",
+        "\n",
+        "**Secondary — is the top of the queue any good? precision@K by manual review**, with K set to real\n",
+        "editor capacity (K = 20, and K = 50). I read the top K pages myself and judge whether each is a\n",
+        "plausible title/snippet/intent review candidate. Overall accuracy across all 16,726 pages is\n",
+        "irrelevant: the queue is consumed from the top down, so only the top matters.\n",
+        "\n",
+        "**Later upgrade (Week 5+, on the warehouse):** the full release has ~17 months of daily history, so I\n",
+        "can add a genuinely time-aware check — flag pages from an earlier window, then look at whether their\n",
+        "CTR actually moved in a later window. That is a stronger test than manual review, and it becomes\n",
+        "possible only once I am off this single-snapshot slice.\n"
+      ],
+      "id": "cell05"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 19,
+      "metadata": {
+        "id": "cell06",
+        "outputId": "6bee10f0-f7d2-4780-a4b6-af4830346aa0",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Baseline A - global median CTR      : MAE = 0.196 pp\n",
+            "Baseline B - position-tier median   : MAE = 0.185 pp   <- the rule to beat\n",
+            "Improvement of the tier rule over global: 5.6%\n",
+            "\n",
+            "=> Success = a learned expected-CTR model must beat MAE = 0.185 pp on HELD-OUT CLIENTS (grouped split on client_id),\n",
+            "   and its top-K queue must beat the rule's top-K on precision@K by manual review.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# This cell is for CODE (numbers, a query, a check).\n",
+        "# The metric must be computable TODAY on a baseline. Here is that baseline:\n",
+        "# the Week-1 fixed rule -> \"expected CTR = median CTR of the page's own position tier\".\n",
+        "scope[\"expected_ctr_rule\"] = scope.groupby(\"position_tier\")[\"ctr\"].transform(\"median\")\n",
+        "\n",
+        "mae_rule   = (scope[\"ctr\"] - scope[\"expected_ctr_rule\"]).abs().mean()\n",
+        "mae_global = (scope[\"ctr\"] - scope[\"ctr\"].median()).abs().mean()\n",
+        "\n",
+        "print(f\"Baseline A - global median CTR      : MAE = {mae_global:.3f} pp\")\n",
+        "print(f\"Baseline B - position-tier median   : MAE = {mae_rule:.3f} pp   <- the rule to beat\")\n",
+        "print(f\"Improvement of the tier rule over global: \"\n",
+        "      f\"{(mae_global - mae_rule) / mae_global * 100:.1f}%\")\n",
+        "print(\"\\n=> Success = a learned expected-CTR model must beat MAE = \"\n",
+        "      f\"{mae_rule:.3f} pp on HELD-OUT CLIENTS (grouped split on client_id),\")\n",
+        "print(\"   and its top-K queue must beat the rule's top-K on precision@K by manual review.\")\n"
+      ],
+      "id": "cell06"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell07"
+      },
+      "source": [
+        "## 4. The unit of analysis, as a real dataframe\n",
+        "\n",
+        "*Load your lane's slice and show it: one row = one what?*\n",
+        "\n",
+        "**One row = one pseudonymised content page**, with all of its metrics aggregated over the same\n",
+        "trailing 90-day window.\n",
+        "\n",
+        "My lane's slice is narrower than the full file, for two reasons that are both about not fooling\n",
+        "myself:\n",
+        "\n",
+        "- **`avg_position > 0`** — in this dataset `0` does not mean \"ranked first\", it means *no position\n",
+        "  data at all*. Leaving those rows in would invent a best-possible position for pages nobody\n",
+        "  measured.\n",
+        "- **`impressions_90d >= 500`** — a volume floor. On a page with 40 impressions a single extra click\n",
+        "  swings CTR by 2.5 percentage points, so a \"shortfall\" down there is noise wearing a lab coat.\n",
+        "\n",
+        "The code prints the grain check (no duplicate `content_id`, so one row really is one page), the size\n",
+        "of the in-scope population, and a preview of what the output table will look like once a model\n",
+        "fills in the expected-CTR column.\n",
+        "\n",
+        "**The preview exposes a real flaw in my baseline, and it is the most useful thing in this notebook.**\n",
+        "Every page at the top of the rule's queue is a **zero-click page** — real impressions, not one click\n",
+        "— and every one of them scores a shortfall of *exactly* the tier median (0.24 pp for `page_1`).\n",
+        "That is not a coincidence: if actual CTR is 0, then \"expected minus actual\" is just \"expected\", so\n",
+        "every zero-click page in a tier receives an identical score. The code below counts how many distinct\n",
+        "scores exist in the rule's top 100, and the answer is **1** — all one hundred pages are handed the\n",
+        "same number. There are 2,530 zero-click pages in scope (15% of the queue), so this is not a rare\n",
+        "edge case.\n",
+        "\n",
+        "So the fixed rule **cannot rank the top of its own queue.** It hands the editor a pile of ties and\n",
+        "no way to choose among them — which is a fatal problem for an output whose entire job is ordering.\n",
+        "This is the sharpest argument for the learned expectation: a model conditions on volume, intent,\n",
+        "content type and freshness as well as position, so two zero-click pages get *different* expected\n",
+        "values and therefore a real ordering.\n",
+        "\n",
+        "Zero-click pages also need care for a second reason: they have innocent explanations (a brand query\n",
+        "answered directly on the results page, a SERP feature absorbing the click). They will carry their own\n",
+        "reason code and a caveat, rather than a blind spot at the top of the queue.\n"
+      ],
+      "id": "cell07"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 20,
+      "metadata": {
+        "id": "cell08",
+        "outputId": "ba67a995-0a17-4b4d-80b2-3ee81831f7dc",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "duplicate content_id rows in scope: 0  (0 => one row = one page)\n",
+            "unit of analysis: 16,726 pages across 28 pseudonymous clients\n",
+            "\n",
+            "Top 8 by CTR shortfall (baseline version of the ranked queue):\n",
+            "position_tier  avg_position  impressions_90d  clicks_90d  ctr  expected_ctr_rule  ctr_shortfall_pp\n",
+            "       page_1           5.5             7737           0  0.0               0.24              0.24\n",
+            "       page_1           6.3             2080           0  0.0               0.24              0.24\n",
+            "       page_1           6.5             2092           0  0.0               0.24              0.24\n",
+            "       page_1           6.8             2845           0  0.0               0.24              0.24\n",
+            "       page_1           3.7              742           0  0.0               0.24              0.24\n",
+            "       page_1           5.7              740           0  0.0               0.24              0.24\n",
+            "       page_1           9.7              599           0  0.0               0.24              0.24\n",
+            "       page_1           7.7              622           0  0.0               0.24              0.24\n",
+            "\n",
+            "Zero-click pages in scope   : 2,530 (15% of the queue)\n",
+            "Distinct shortfall values in the rule's top 100: 1\n",
+            "=> Every zero-click page scores exactly its tier median, so the rule TIES them\n",
+            "   and cannot say which to review first. A learned per-page expectation\n",
+            "   gives each page its own number, which is what breaks the tie.\n",
+            "\n",
+            "Columns a model would ADD: expected_ctr_model, ctr_shortfall_model, rank, reason_code.\n"
+          ]
+        }
+      ],
+      "source": [
+        "# This cell is for CODE (numbers, a query, a check).\n",
+        "# Grain check: is one row really one content page?\n",
+        "dupes = scope[\"content_id\"].duplicated().sum()\n",
+        "print(f\"duplicate content_id rows in scope: {dupes}  (0 => one row = one page)\")\n",
+        "print(f\"unit of analysis: {len(scope):,} pages across \"\n",
+        "      f\"{scope['client_id'].nunique()} pseudonymous clients\\n\")\n",
+        "\n",
+        "# Sketch of the target/output columns this task would produce.\n",
+        "scope[\"ctr_shortfall_pp\"] = scope[\"expected_ctr_rule\"] - scope[\"ctr\"]\n",
+        "\n",
+        "cols = [\"position_tier\", \"avg_position\", \"impressions_90d\", \"clicks_90d\",\n",
+        "        \"ctr\", \"expected_ctr_rule\", \"ctr_shortfall_pp\"]\n",
+        "preview = (scope.sort_values(\"ctr_shortfall_pp\", ascending=False)\n",
+        "                .loc[:, cols]\n",
+        "                .head(8)\n",
+        "                .round(2))\n",
+        "print(\"Top 8 by CTR shortfall (baseline version of the ranked queue):\")\n",
+        "print(preview.to_string(index=False))\n",
+        "\n",
+        "# How well does the RULE actually order the top of the queue?\n",
+        "zero_click = int((scope[\"clicks_90d\"] == 0).sum())\n",
+        "top100 = scope.nlargest(100, \"ctr_shortfall_pp\")\n",
+        "print(f\"\\nZero-click pages in scope   : {zero_click:,} ({zero_click/len(scope):.0%} of the queue)\")\n",
+        "print(f\"Distinct shortfall values in the rule's top 100: \"\n",
+        "      f\"{top100['ctr_shortfall_pp'].nunique()}\")\n",
+        "print(\"=> Every zero-click page scores exactly its tier median, so the rule TIES them\")\n",
+        "print(\"   and cannot say which to review first. A learned per-page expectation\")\n",
+        "print(\"   gives each page its own number, which is what breaks the tie.\")\n",
+        "print(\"\\nColumns a model would ADD: expected_ctr_model, ctr_shortfall_model, rank, reason_code.\")\n"
+      ],
+      "id": "cell08"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell09"
+      },
+      "source": [
+        "## 5. Why ML beats a fixed rule here\n",
+        "\n",
+        "*What makes the pattern too messy for an if-statement?*\n",
+        "\n",
+        "The fair test is not \"is ML fancier\" — it is \"does a plain rule already do this job\". My Week-1 rule\n",
+        "was exactly that if-statement: *expected CTR = the median CTR of your position tier*. One variable,\n",
+        "readable, and honestly not bad. So ML has to earn the upgrade.\n",
+        "\n",
+        "**Where the one-variable rule breaks — measured.** It assumes every page at the same position should\n",
+        "attract clicks at the same rate. The code below tests that inside `page_1` (7,064 pages) and the\n",
+        "assumption does not survive: median CTR runs from **0.00%** for informational comparison articles up\n",
+        "to **0.26%** for transactional keyword articles. That is a spread of **0.26 pp inside a single\n",
+        "tier — larger than the tier's own median of 0.24%**. In other words, the variation the rule ignores\n",
+        "is bigger than the signal it uses.\n",
+        "\n",
+        "The consequence is not academic. The rule systematically over-flags naturally-low-CTR groups (they\n",
+        "look guilty of a shortfall they never had) and under-flags naturally-high-CTR ones (real\n",
+        "underperformance hides inside a generous tier average). Both failures spend an editor's scarce\n",
+        "review slots on the wrong pages.\n",
+        "\n",
+        "Note also the first line of that table: informational comparison articles have a median CTR of\n",
+        "exactly **0.00%** — more than half of them get no clicks at all. A rule built on tier averages has\n",
+        "no way to treat that group differently from the rest of the tier, but any model that sees\n",
+        "`content_type` immediately can.\n",
+        "\n",
+        "**What makes it genuinely messy.** Expected CTR depends on several signals *at once* — position\n",
+        "(non-linearly: the drop from 1 to 3 is not the drop from 11 to 13), impressions volume, intent,\n",
+        "content type, keyword competition, freshness. Writing that conditional expectation by hand means\n",
+        "hand-tuning a lookup table across several interacting dimensions, and re-tuning it whenever the mix\n",
+        "shifts. That is precisely the situation where learning the function beats writing it.\n",
+        "\n",
+        "**But it has to prove it.** ML earns its place here only if it beats the tier rule's MAE on\n",
+        "held-out clients (Section 3). If it does not, the honest answer is to ship the rule — and that is a\n",
+        "real result worth reporting, not a failure.\n",
+        "\n",
+        "**The action this supports.** The output is a ranked review queue with a reason code per page\n",
+        "(\"high impressions, position 4–10, CTR well under the expectation for this intent and content\n",
+        "type\"). A content editor works down it and rewrites the title and meta description, improves snippet\n",
+        "structure, or flags an intent mismatch. Everything I claim stays **observed, directional and\n",
+        "decision-support** — I am prioritising human attention, not proving that any edit causes recovery.\n"
+      ],
+      "id": "cell09"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 21,
+      "metadata": {
+        "id": "cell10",
+        "outputId": "8af6b279-7fc6-4cbd-d2b4-11687db8dc5b",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Position tier examined: 'page_1'  (7,064 pages)\n",
+            "\n",
+            "Median CTR (%) INSIDE this one tier, by content type x intent:\n",
+            "      content_type   main_intent  median_ctr    n\n",
+            "comparison article informational        0.00   50\n",
+            "   keyword article    commercial        0.22 1210\n",
+            "   keyword article informational        0.24 3962\n",
+            "    feedly article       unknown        0.26   83\n",
+            "   keyword article transactional        0.26 1734\n",
+            "\n",
+            "Weakest sub-group median : 0.00%\n",
+            "Strongest sub-group median: 0.26%\n",
+            "Spread inside this one tier: 0.26 pp, against a tier median of 0.24% (108% of the tier's own expected value).\n",
+            "=> Position alone does not determine expected CTR. A one-variable rule\n",
+            "   charges some pages for being the wrong content type, and lets others off.\n",
+            "\n",
+            "Median CTR by content type within the same tier:\n",
+            "content_type\n",
+            "comparison article    0.00\n",
+            "feedly article        0.26\n",
+            "keyword article       0.24\n"
+          ]
+        }
+      ],
+      "source": [
+        "# This cell is for CODE (numbers, a query, a check).\n",
+        "# If CTR only depended on position, then inside ONE position tier every page\n",
+        "# would look alike. Does it? Test on the tier with the most in-scope pages.\n",
+        "top_tier = scope[\"position_tier\"].value_counts().idxmax()\n",
+        "sub = scope[scope[\"position_tier\"] == top_tier].copy()\n",
+        "sub[\"main_intent\"]  = sub[\"main_intent\"].fillna(\"unknown\")\n",
+        "sub[\"content_type\"] = sub[\"content_type\"].fillna(\"unknown\")\n",
+        "\n",
+        "grp = (sub.groupby([\"content_type\", \"main_intent\"])[\"ctr\"]\n",
+        "          .agg(median_ctr=\"median\", n=\"size\")\n",
+        "          .reset_index())\n",
+        "grp = grp[grp[\"n\"] >= 30].sort_values(\"median_ctr\")\n",
+        "\n",
+        "print(f\"Position tier examined: '{top_tier}'  ({len(sub):,} pages)\\n\")\n",
+        "if len(grp) >= 2:\n",
+        "    print(\"Median CTR (%) INSIDE this one tier, by content type x intent:\")\n",
+        "    print(grp.round(2).to_string(index=False))\n",
+        "    lo, hi = grp[\"median_ctr\"].min(), grp[\"median_ctr\"].max()\n",
+        "    tier_med = sub[\"ctr\"].median()\n",
+        "    print(f\"\\nWeakest sub-group median : {lo:.2f}%\")\n",
+        "    print(f\"Strongest sub-group median: {hi:.2f}%\")\n",
+        "    print(f\"Spread inside this one tier: {hi - lo:.2f} pp, \"\n",
+        "          f\"against a tier median of {tier_med:.2f}% \"\n",
+        "          f\"({(hi - lo) / tier_med:.0%} of the tier's own expected value).\")\n",
+        "    print(\"=> Position alone does not determine expected CTR. A one-variable rule\")\n",
+        "    print(\"   charges some pages for being the wrong content type, and lets others off.\")\n",
+        "else:\n",
+        "    print(\"Not enough sub-groups above the size floor to compare.\")\n",
+        "\n",
+        "# How much does the tier rule disagree with itself across sub-groups?\n",
+        "by_type = sub.groupby(\"content_type\")[\"ctr\"].median().round(2)\n",
+        "print(\"\\nMedian CTR by content type within the same tier:\")\n",
+        "print(by_type.to_string())\n"
+      ],
+      "id": "cell10"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cell11"
+      },
+      "source": [
+        "## Self-check\n",
+        "\n",
+        "Before you submit, confirm each line honestly:\n",
+        "\n",
+        "- [x] Every section above is filled — markdown thinking AND the code that backs it\n",
+        "- [x] The notebook runs top to bottom with no errors (Runtime → Run all)\n",
+        "- [x] No client names, URLs, or private queries anywhere — only pseudonymous IDs and aggregates\n",
+        "- [x] My claims use careful words: observed, measured, directional, decision-support\n",
+        "- [x] Committed to my repo under `work/notebooks/` — then submit your repo URL on the card. Done.\n",
+        "\n",
+        "**Frame in one paragraph.** For a content editor, deciding which visible pages to review this week,\n",
+        "I will build a ranked review queue from the FlyRank content slice, scoring each page by the shortfall\n",
+        "between its learned expected CTR and its observed CTR, measured by MAE on a client-holdout split and\n",
+        "precision@K on the top of the queue. A wrong call costs a wasted review slot (and a pointless rewrite\n",
+        "can damage a working title); a missed one leaves cheap clicks unclaimed. A plain rule is not enough\n",
+        "because expected CTR depends on position, volume, intent and content type at once, and a\n",
+        "position-only rule provably mis-scores whole content types. I will claim observed, directional,\n",
+        "decision-support results only.\n"
+      ],
+      "id": "cell11"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    },
+    "colab": {
+      "provenance": []
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
