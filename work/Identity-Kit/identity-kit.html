@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saad Imran — Identity Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3864;      /* brand / primary */
+    --ink:#14181F;       /* near-black text */
+    --paper:#FAFAF8;     /* near-white background */
+    --accent:#2F6F4E;    /* single calm accent — "evidence green" */
+    --line:#E6E7E2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+       line-height:1.55;padding:48px 40px;}
+  .sheet{max-width:900px;margin:0 auto;}
+  h1,h2,.mono-word{font-family:'Space Grotesk','Inter',sans-serif;}
+  .head{display:flex;align-items:center;gap:22px;border-bottom:2px solid var(--navy);
+        padding-bottom:22px;margin-bottom:34px;}
+  .logo{width:74px;height:74px;border-radius:16px;background:var(--navy);color:var(--paper);
+        display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';
+        font-weight:700;font-size:38px;letter-spacing:2px;flex:none;position:relative;}
+  .logo::after{content:"";position:absolute;bottom:14px;left:20px;right:20px;height:3px;
+               border-radius:2px;background:var(--accent);}
+  h1{font-size:30px;color:var(--navy);font-weight:700;letter-spacing:-.5px;}
+  .sub{color:#5b6470;font-size:15px;margin-top:2px;}
+  h2{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);
+     margin:0 0 14px;font-weight:700;}
+  .block{margin-bottom:34px;}
+  /* type */
+  .type-row{display:flex;gap:40px;flex-wrap:wrap;}
+  .type-card{flex:1;min-width:280px;border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;}
+  .type-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#8a919b;margin-bottom:8px;}
+  .type-name{font-size:15px;color:var(--accent);font-weight:600;margin-bottom:10px;}
+  .sg{font-family:'Space Grotesk';}
+  .in{font-family:'Inter';}
+  .big{font-size:34px;line-height:1.1;font-weight:700;color:var(--ink);}
+  .body-sample{font-size:15px;color:#3a414c;margin-top:6px;}
+  /* palette */
+  .swatches{display:flex;gap:16px;flex-wrap:wrap;}
+  .sw{width:150px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;}
+  .chip{height:96px;}
+  .sw .meta{padding:10px 12px;}
+  .sw .nm{font-weight:600;font-size:13px;}
+  .sw .hex{font-family:'Space Grotesk';font-size:13px;color:#5b6470;letter-spacing:.5px;margin-top:2px;}
+  /* logo section */
+  .logo-row{display:flex;align-items:center;gap:26px;flex-wrap:wrap;}
+  .logo-lg{width:96px;height:96px;border-radius:20px;background:var(--navy);color:var(--paper);
+           display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';
+           font-weight:700;font-size:48px;letter-spacing:3px;position:relative;}
+  .logo-lg::after{content:"";position:absolute;bottom:20px;left:26px;right:26px;height:4px;border-radius:2px;background:var(--accent);}
+  .fav{width:40px;height:40px;border-radius:9px;background:var(--navy);color:var(--paper);
+       display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:19px;}
+  .logo-note{color:#5b6470;font-size:14px;max-width:360px;}
+  /* style note */
+  .note{background:var(--navy);color:var(--paper);border-radius:14px;padding:22px 26px;}
+  .note .k{color:#9fb2d6;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+  .note p{font-size:15px;line-height:1.65;}
+  .note .mono{font-family:'Space Grotesk';}
+  .foot{margin-top:30px;color:#9aa1ab;font-size:12px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="head">
+    <div class="logo">SI</div>
+    <div>
+      <h1>Muhammad Saad Imran</h1>
+      <div class="sub">Identity Kit &middot; grounded RAG systems &middot; decide once, every page inherits it</div>
+    </div>
+  </div>
+
+  <!-- TYPE -->
+  <div class="block">
+    <h2>Type</h2>
+    <div class="type-row">
+      <div class="type-card">
+        <div class="type-label">Heading font</div>
+        <div class="type-name">Space Grotesk &middot; free (Google Fonts)</div>
+        <div class="big sg">Aa Bb Cc 0123</div>
+        <div class="body-sample sg">Answers only from your documents.</div>
+      </div>
+      <div class="type-card">
+        <div class="type-label">Body font</div>
+        <div class="type-name">Inter &middot; free (Google Fonts)</div>
+        <div class="big in">Aa Bb Cc 0123</div>
+        <div class="body-sample in">Plain, readable body text that stays out of the way so the work reads first.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALETTE -->
+  <div class="block">
+    <h2>Palette</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#1F3864"></div><div class="meta"><div class="nm">Navy — primary</div><div class="hex">#1F3864</div></div></div>
+      <div class="sw"><div class="chip" style="background:#14181F"></div><div class="meta"><div class="nm">Ink — text</div><div class="hex">#14181F</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FAFAF8;border-bottom:1px solid var(--line)"></div><div class="meta"><div class="nm">Paper — background</div><div class="hex">#FAFAF8</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2F6F4E"></div><div class="meta"><div class="nm">Green — accent</div><div class="hex">#2F6F4E</div></div></div>
+    </div>
+  </div>
+
+  <!-- LOGO -->
+  <div class="block">
+    <h2>Logo / Favicon</h2>
+    <div class="logo-row">
+      <div class="logo-lg">SI</div>
+      <div class="fav">SI</div>
+      <div class="logo-note">A clean <strong>SI</strong> monogram in the heading font, navy on paper, with a single green underline that nods to the "evidence-backed" idea. Scales down to a favicon.</div>
+    </div>
+  </div>
+
+  <!-- STYLE NOTE -->
+  <div class="block">
+    <h2>Style note (for the Claude Project)</h2>
+    <div class="note">
+      <div class="k">Two-line style note</div>
+      <p><span class="mono">Fonts: Space Grotesk (headings), Inter (body). Palette: navy #1F3864, ink #14181F, paper #FAFAF8, accent green #2F6F4E.</span><br>
+      Mood: calm, professional, evidence-first — the design stays quiet so the work is the loudest thing on the page.</p>
+    </div>
+  </div>
+
+  <div class="foot">One-page identity kit &middot; every case study inherits these decisions.</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#1F3864"/>
+  <text x="256" y="258" text-anchor="middle" dominant-baseline="central"
+        font-family="DejaVu Sans, Arial, sans-serif" font-weight="700"
+        font-size="230" fill="#FAFAF8" letter-spacing="4">SI</text>
+  <rect x="150" y="372" width="212" height="14" rx="7" fill="#2F6F4E"/>
+</svg>
