@@ -6,7 +6,7 @@
 
 **Free only.** No paid hosting, no paid tools, no domain purchase. If it costs money, it's out.
 
-**My honest skill level.** I'm comfortable with HTML and CSS and can read and adapt JavaScript, but I'm not fluent in a JS framework. I'm a Software Engineering student whose real strength is Python and backend/ML work — DecisAI's retrieval layer was Python, FastAPI, ChromaDB. Front-end is not where I'm fastest, and I shouldn't pretend otherwise when I have a capstone to finish in the same weeks.
+**My honest skill level.** I'm comfortable with HTML and CSS and can read and adapt JavaScript, but I'm not fluent in a JS framework. I work in Python well enough to build real things with it — DecisAI's retrieval layer was Python, FastAPI and ChromaDB — but I'm still learning and wouldn't claim it as a strength yet. I'm a Software Engineering student building across several areas at once, so the honest position is that I'm not fast in any one stack, and I shouldn't pick a tool that assumes I am.
 
 **What my portfolio has to do** (from my sitemap and content map): four pieces, no more — a hero stating one claim, a proof page leading with DecisAI, a short about folded into the hero, and a contact page. Every call to action ladders to one action: *email me to set up a call*.
 
@@ -52,7 +52,7 @@
 
 **I chose Option A: hand-written HTML/CSS on GitHub Pages.** It's already live at https://saad-imran-toori.github.io.
 
-**Can I maintain this?** Yes — and that's the deciding reason. It's the only option where nothing can rot. There are no dependencies to update, no build that can fail, no framework version to chase. If I come back in six months having not touched it, I open an HTML file and edit text. Given that I'm spending the next month on a machine-learning capstone, "maintenance cost near zero" is worth more to me than convenience I'd rarely use.
+**Can I maintain this?** Yes — and that's the deciding reason. It's the only option where nothing can rot. There are no dependencies to update, no build that can fail, no framework version to chase. If I come back in six months having not touched it, I open an HTML file and edit text. Since I'm still building my skills across several areas at once and have a machine-learning capstone running in the same weeks, "maintenance cost near zero" is worth more to me than convenience I'd rarely use.
 
 **Does it show my work well?** Yes. My proof is a demo video, real screenshots, repo links, and a few hundred words per case. Plain HTML displays all of that properly. The bottleneck on my portfolio is not the technology — it's whether the DecisAI screenshots are clean and whether the case studies are honest. No stack fixes that for me.
 
