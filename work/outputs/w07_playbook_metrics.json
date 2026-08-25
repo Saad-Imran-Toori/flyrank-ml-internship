@@ -67,7 +67,7 @@
     "psi_trigger": 0.1,
     "retrain_cadence": "monthly, on new labels - never on a drift alert"
   },
-  "decay_finding": "declining pages were NOT more likely to under-capture than flat pages in this panel; pages growing >50% in impressions were the most likely. Negative result for the refresh-the-declining-page recommendation.",
+  "decay_finding": "across the whole panel momentum barely separates: every bucket sits between 0.198 and 0.242 against a base rate of 0.225, with the rising>50% bucket highest. Conditioned on already converting below tier, slipping pages do carry signal (0.365 vs 0.333 for growing). Decline is not a priority signal on its own; below-tier conversion is what separates pages.",
   "queue_export": {
     "path": "work/outputs/w07_action_queue.csv",
     "rows": 500,
