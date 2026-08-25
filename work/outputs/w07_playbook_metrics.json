@@ -1,0 +1,77 @@
+{
+  "notebook": "ML-10 content action playbook",
+  "scoring": "out-of-fold, GroupKFold on client_hash_id, n_splits=5, HistGB max_iter=200",
+  "population": {
+    "pages": 40152,
+    "clients": 24,
+    "feature_months": [
+      "2026-01",
+      "2026-02"
+    ],
+    "label_month": "2026-03",
+    "sealed_month_untouched": "2026-06",
+    "scope_note": "pages still receiving search impressions in the outcome month"
+  },
+  "base_rate": 0.225,
+  "precision_at_50_pooled": 0.94,
+  "precision_at_50_per_fold_mean": 0.784,
+  "precision_at_50_per_fold": [
+    0.9,
+    0.78,
+    0.84,
+    0.8,
+    0.6
+  ],
+  "precision_note": "pooled and per-fold are DIFFERENT quantities and must not be compared. Pooled describes this queue. Per-fold is the figure that compares to ML-08 and to the Week-4 rule.",
+  "precision_at_k": {
+    "10": 0.9,
+    "20": 0.95,
+    "30": 0.967,
+    "50": 0.94,
+    "100": 0.83,
+    "200": 0.82
+  },
+  "lift_over_base_rate": {
+    "10": 3.99,
+    "20": 4.22,
+    "30": 4.29,
+    "50": 4.17,
+    "100": 3.68,
+    "200": 3.64
+  },
+  "archetype_mix_top50": {
+    "big_under_converter": 40,
+    "zero_click_verify": 6,
+    "growing_diluted": 4
+  },
+  "archetype_precision_top50": {
+    "big_under_converter": 0.98,
+    "zero_click_verify": 0.83,
+    "growing_diluted": 0.75
+  },
+  "monitoring": {
+    "watched_features": [
+      "ctr_feb",
+      "pos_feb",
+      "impr_feb",
+      "momentum",
+      "active_days_feb"
+    ],
+    "drift_sentinels": [
+      "ctr_feb"
+    ],
+    "rejected_as_sentinel": {
+      "impr_feb": 1.346
+    },
+    "rejection_rule": "normal Jan->Feb PSI above 0.25 means the feature cannot detect drift; watched for data quality instead",
+    "psi_trigger": 0.1,
+    "retrain_cadence": "monthly, on new labels - never on a drift alert"
+  },
+  "decay_finding": "declining pages were NOT more likely to under-capture than flat pages in this panel; pages growing >50% in impressions were the most likely. Negative result for the refresh-the-declining-page recommendation.",
+  "queue_export": {
+    "path": "work/outputs/w07_action_queue.csv",
+    "rows": 500,
+    "committed": false,
+    "reason": "work/**/*.csv is blocked by the repo leak-guard; this notebook regenerates it"
+  }
+}
