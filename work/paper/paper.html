@@ -130,9 +130,11 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
   <!-- ===================== ABSTRACT ===================== -->
   <div class="abstract">
     <h2>Abstract</h2>
-    <p>An editor can review roughly fifty pages a week from a portfolio of hundreds of thousands, so
-    the decision worth supporting is not <em>which pages are underperforming</em> &mdash; thousands
-    are &mdash; but <em>which one to open first</em>. Using three months of Google Search Console data
+    <p>FlyRank publishes content into client websites and then watches search data to keep it
+    working, flagging pages that need attention with hand-written threshold rules &mdash; but an
+    editor can review only about fifty pages a week from a portfolio of hundreds of thousands, so
+    the decision worth supporting is not <em>which pages are underperforming</em> (thousands are)
+    but <em>which one to open first</em>. Using three months of Google Search Console data
     from the FlyRank internship warehouse, I built features from January and February 2026 and defined
     the outcome from March: a page under-captured clicks if its March click-through rate fell in the
     bottom quarter of pages sharing its February search-position tier. A gradient-boosted classifier
@@ -161,6 +163,27 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
 
   <!-- ===================== 1. INTRODUCTION ===================== -->
   <h2 class="num" id="intro">Introduction</h2>
+
+  <h3>Where this problem comes from</h3>
+
+  <p>FlyRank builds content as infrastructure. It researches, writes and publishes content directly
+  into a client's website, then watches search data and optimises &mdash; the full cycle, run by
+  algorithms rather than by people doing it by hand. Content that gets found in search ranks, and
+  then quietly decays: rankings slip, clicks drop, and most teams notice too late.</p>
+
+  <p>The product already responds to this. It flags pages today with a health score, quick-win tags
+  and needs-attention markers. Those flags are <strong>hand-written rules</strong> &mdash;
+  if-this-then-that, with thresholds chosen by a person. They work, and they run in production. But
+  rules run out where signals get many, tangled and shifting, and at the time of writing no trained
+  model has replaced them.</p>
+
+  <p>That gap is the whole of this paper. I took one of those rules, froze it as a baseline, and
+  asked whether a learned model beats it on identical terms. Because the product's flags are the
+  output of a decision someone already made, they are used here strictly as <em>something to beat</em>
+  &mdash; never as model inputs. A model trained on an existing system's scores learns the old rule,
+  not the world.</p>
+
+  <h3>The decision, concretely</h3>
 
   <p>An editor sits down on Monday with a list of pages and about fifty reviews' worth of time. The
   portfolio runs to hundreds of thousands of pages. Asking "which pages are underperforming?" returns
