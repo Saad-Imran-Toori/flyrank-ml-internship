@@ -29,16 +29,20 @@ h1,h2,h3,.mono{ font-family:'Space Grotesk','Inter',sans-serif; }
 .wrap{ max-width:880px; margin:0 auto; padding:0 24px; }
 
 header{ border-bottom:1px solid var(--line); background:rgba(250,250,248,.9); }
-nav{ display:flex; align-items:center; gap:22px; padding:16px 24px; max-width:880px; margin:0 auto; }
+/* SCOPED to the top bar. A bare nav{} also matched <nav class="toc"> and
+   <nav class="flinks">, which is why the paper's Contents heading sat BESIDE
+   its list, vertically centred, instead of above it. Found on a real phone. */
+header nav{ display:flex; flex-wrap:wrap; align-items:center; column-gap:22px; row-gap:2px;
+     padding:8px 24px; max-width:880px; margin:0 auto; }
 .mark{ width:38px; height:38px; border-radius:9px; background:var(--navy); color:var(--paper);
   display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;
   font-weight:700; font-size:17px; letter-spacing:1px; position:relative; flex:none; text-decoration:none; }
 .mark::after{ content:""; position:absolute; bottom:8px; left:10px; right:10px; height:2px;
   border-radius:2px; background:var(--accent); }
-nav a.link{ color:var(--muted); text-decoration:none; font-size:15px; }
-nav a.link:hover{ color:var(--navy); }
-nav a.link[aria-current="page"]{ color:var(--navy); font-weight:500; }
-nav .spacer{ margin-left:auto; }
+header nav a.link{ color:var(--muted); text-decoration:none; font-size:15px; padding:10px 0; }
+header nav a.link:hover{ color:var(--navy); }
+header nav a.link[aria-current="page"]{ color:var(--navy); font-weight:500; }
+header nav .spacer{ margin-left:auto; }
 
 main{ padding:52px 0 40px; counter-reset:sec; }
 h1{ font-size:clamp(27px,5.2vw,40px); color:var(--navy); letter-spacing:-.6px; line-height:1.18; margin-bottom:12px; }
@@ -63,6 +67,7 @@ strong{ font-weight:600; }
   color:var(--accent); }
 .abstract p{ margin:0; max-width:none; }
 
+.toc ol a{ display:inline-block; padding:6px 0; }
 .toc{ border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin-bottom:30px; background:#fff; }
 .toc h2{ margin:0 0 10px; font-size:12px; letter-spacing:1.4px; text-transform:uppercase; color:var(--muted); }
 .toc ol{ margin:0 0 0 18px; columns:2; column-gap:34px; max-width:none; }
@@ -70,6 +75,11 @@ strong{ font-weight:600; }
 .toc a:hover{ text-decoration:underline; }
 @media (max-width:620px){ .toc ol{ columns:1; } }
 
+/* A 4- and a 5-column table cannot shrink below ~400px. Rather than crush the
+   numbers, let the table scroll sideways inside its own box - the page itself
+   never scrolls sideways. */
+.tscroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; margin:18px 0 10px; }
+.tscroll table{ margin:0; }
 table{ width:100%; border-collapse:collapse; margin:18px 0 10px; font-size:15px; }
 th,td{ text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
 thead th{ background:#fff; color:var(--navy); font-weight:600; font-size:14px;
@@ -80,7 +90,12 @@ td.n,th.n{ text-align:right; font-variant-numeric:tabular-nums; }
 .tnote{ font-size:13px; color:var(--muted); font-style:italic; margin:0 0 22px; }
 
 figure{ margin:24px 0; }
-figure img{ width:100%; border:1px solid var(--line); border-radius:10px; display:block; }
+/* height:auto is REQUIRED now that the <img> tags carry intrinsic width/height
+   attributes - without it the attribute height wins over the aspect ratio and
+   every figure stretches. The attributes are what stop the page jumping while
+   images load; height:auto is what keeps them undistorted. */
+figure a{ display:block; }
+figure img{ width:100%; height:auto; border:1px solid var(--line); border-radius:10px; display:block; }
 figcaption{ font-size:13.5px; color:var(--muted); margin-top:8px; }
 figcaption b{ color:var(--ink); font-weight:600; }
 .flabel{ font-family:'Space Grotesk',sans-serif; font-size:11px; letter-spacing:1.2px;
@@ -96,9 +111,9 @@ figcaption b{ color:var(--ink); font-weight:600; }
 
 footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; font-size:14px; color:var(--muted); }
 .flinks{ display:flex; flex-wrap:wrap; gap:18px; margin-bottom:12px; }
-.flinks a{ color:var(--muted); text-decoration:none; font-size:14px; }
+.flinks a{ color:var(--muted); text-decoration:none; font-size:14px; padding:10px 0; }
 .flinks a:hover{ color:var(--navy); text-decoration:underline; }
-.fnote{ margin:0; font-size:13px; color:#8a919b; }
+.fnote{ margin:0; font-size:13px; color:#6b7280; }
 
 @media print{
   header,footer,.toc{ display:none; }
@@ -213,7 +228,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
 
   <figure>
     <span class="flabel">Figure 1</span>
-    <img src="ml03-lane.jpg" alt="Executed notebook output showing the position-tier baseline beating a flat prediction by only 5.6 percent.">
+    <a href="ml03-lane.jpg" aria-label="Open the full-size image: Executed notebook output showing the position-tier baseline "><img src="ml03-lane.jpg" alt="Executed notebook output showing the position-tier baseline beating a flat prediction by only 5.6 percent." width="1456" height="819" loading="lazy" decoding="async"></a>
     <figcaption><b>The result that killed the first idea.</b> The position-tier rule improved on a
     single flat prediction by 5.6%. Output from the executed notebook, not a redrawing of it.</figcaption>
   </figure>
@@ -234,14 +249,14 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
 
   <h3>Date windows, and the boundary that defines the whole study</h3>
 
-  <table>
+  <div class="tscroll"><table>
     <thead><tr><th>Window</th><th>Months</th><th>Role</th></tr></thead>
     <tbody>
       <tr><td>Features</td><td>January + February 2026</td><td>Everything knowable at the moment of the decision</td></tr>
       <tr><td>Outcome</td><td>March 2026</td><td>The label. Never a feature</td></tr>
       <tr><td>Sealed</td><td>June 2026</td><td><strong>Never queried.</strong> Held for a single blind evaluation later</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p class="tnote">The decision is taken at the end of February. Anything from March onwards is the
   future and cannot inform it.</p>
 
@@ -332,7 +347,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
 
   <figure>
     <span class="flabel">Figure 2</span>
-    <img src="ml04-leakage.png" alt="Notebook output showing R squared rising from 0.037 to 0.874 when a label-derived column is added, then removed.">
+    <a href="ml04-leakage.png" aria-label="Open the full-size image: Notebook output showing R squared rising from 0.037 to 0.874"><img src="ml04-leakage.png" alt="Notebook output showing R squared rising from 0.037 to 0.874 when a label-derived column is added, then removed." width="1226" height="748" loading="lazy" decoding="async"></a>
     <figcaption><b>What leakage looks like on this warehouse.</b> Adding one column derived from the
     answer moved an early model from an honest R&sup2; of 0.037 to 0.874 &mdash; near-perfect while
     cheating. Run deliberately, in week four, to learn the shape of it.</figcaption>
@@ -345,7 +360,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
   <strong>Base rate 0.216</strong> &mdash; the share of pages that under-captured &mdash; is printed
   beside every score, because a precision figure without its base rate says nothing.</p>
 
-  <table>
+  <div class="tscroll"><table>
     <thead><tr><th>Method</th><th class="n">precision@20</th><th class="n">precision@50</th><th class="n">sd across folds</th></tr></thead>
     <tbody>
       <tr><td>Base rate (random ordering)</td><td class="n">0.216</td><td class="n">0.216</td><td class="n">&mdash;</td></tr>
@@ -355,7 +370,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
       <tr><td>Random forest</td><td class="n">&mdash;</td><td class="n">0.760</td><td class="n">0.089</td></tr>
       <tr><td><strong>Gradient boosting</strong></td><td class="n win">0.850</td><td class="n win">0.784</td><td class="n">0.113</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p class="tnote">Same rows, same folds, same metric, same tie policy for every row.</p>
 
   <p><strong>The model beats the rule in every fold, not on average.</strong> Per fold the model
@@ -383,7 +398,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
 
   <figure>
     <span class="flabel">Figure 3</span>
-    <img src="ml09-split.png" alt="Notebook output comparing a random split and a client-grouped split, showing the raw gap of 0.052 and the base-rate-adjusted gap of 0.022.">
+    <a href="ml09-split.png" aria-label="Open the full-size image: Notebook output comparing a random split and a client-groupe"><img src="ml09-split.png" alt="Notebook output comparing a random split and a client-grouped split, showing the raw gap of 0.052 and the base-rate-adjusted gap of 0.022." width="1278" height="543" loading="lazy" decoding="async"></a>
     <figcaption><b>The correction.</b> The raw gap between a dishonest and an honest split is 0.052;
     once the base rate is accounted for it is 0.022. The first number was the one I nearly published.</figcaption>
   </figure>
@@ -482,7 +497,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
   <p>There is no probability threshold to tune. <em>K</em>, the number of pages handed over, is the
   threshold.</p>
 
-  <table>
+  <div class="tscroll"><table>
     <thead><tr><th class="n">Queue length K</th><th class="n">precision@K</th><th class="n">&times; base rate</th><th class="n">Real opportunities</th><th class="n">Hours spent for nothing</th></tr></thead>
     <tbody>
       <tr><td class="n">10</td><td class="n">0.900</td><td class="n">3.99</td><td class="n">9</td><td class="n">1</td></tr>
@@ -492,14 +507,14 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
       <tr><td class="n">100</td><td class="n">0.830</td><td class="n">3.68</td><td class="n">83</td><td class="n">17</td></tr>
       <tr><td class="n">200</td><td class="n">0.820</td><td class="n">3.64</td><td class="n">164</td><td class="n">36</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p class="tnote">Pooled across folds. This is a different measurement from the per-fold precision@50
   in Section 4 &mdash; pooled takes the best 50 of 40,152, per-fold takes the best 50 of roughly 8,030,
   five times. They are not interchangeable and comparing them would overstate the result.</p>
 
   <figure>
     <span class="flabel">Figure 4</span>
-    <img src="ml10_precision_at_k.png" alt="Chart of precision at K against queue length, with the base rate marked as a floor.">
+    <a href="ml10_precision_at_k.png" aria-label="Open the full-size image: Chart of precision at K against queue length, with the base "><img src="ml10_precision_at_k.png" alt="Chart of precision at K against queue length, with the base rate marked as a floor." width="1050" height="630" loading="lazy" decoding="async"></a>
     <figcaption><b>A shorter queue is a more accurate queue.</b> The real decision sits between fifty
     and a hundred: doubling the week's work roughly doubles the finds and multiplies the wasted hours
     by nearly six. The dip at K=10 is a single wrong page, not a pattern.</figcaption>
@@ -507,7 +522,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
 
   <h3>What to do with each kind of page</h3>
 
-  <table>
+  <div class="tscroll"><table>
     <thead><tr><th>Archetype</th><th class="n">Pages</th><th>Recommended first action</th></tr></thead>
     <tbody>
       <tr><td><strong>Verify first</strong> &mdash; real impressions, zero clicks</td><td class="n">6,421</td>
@@ -525,11 +540,11 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
       <tr><td><strong>Watch only</strong></td><td class="n">20,061</td>
           <td>No action. Present for completeness, not recommended for review</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <figure>
     <span class="flabel">Figure 5</span>
-    <img src="ml10_archetype_mix.png" alt="Bar chart of the archetype mix in the top fifty pages, annotated with how often each archetype was correct.">
+    <a href="ml10_archetype_mix.png" aria-label="Open the full-size image: Bar chart of the archetype mix in the top fifty pages, annot"><img src="ml10_archetype_mix.png" alt="Bar chart of the archetype mix in the top fifty pages, annotated with how often each archetype was correct." width="1050" height="630" loading="lazy" decoding="async"></a>
     <figcaption><b>The top of the queue is not evenly mixed.</b> Big under-converters dominate and are
     right 98% of the time; the zero-click group is right 83% &mdash; which is why it is ranked for
     verification rather than for a rewrite.</figcaption>
@@ -571,7 +586,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
   <p>Audited against the <a href="https://www.cs.mcgill.ca/~jpineau/ReproducibilityChecklist.pdf">Machine
   Learning Reproducibility Checklist</a> (Pineau, v2.0).</p>
 
-  <table>
+  <div class="tscroll"><table>
     <thead><tr><th>Item</th><th>This work</th></tr></thead>
     <tbody>
       <tr><td>Dataset statistics</td><td>203,074 pages seen; 40,152 eligible; 24 clients; 3 monthly partitions</td></tr>
@@ -588,7 +603,7 @@ footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; 
       <tr><td>Compute</td><td>Google Colab, CPU runtime, free tier</td></tr>
       <tr><td>Seeds</td><td><span class="mono">SEED = 42</span> throughout. <span class="mono">GroupKFold</span> is deterministic and takes none</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <p><strong>One reproducibility defect worth recording.</strong> An early version assigned the noise
   column by row position, so rebuilding the data pull in a different order silently moved every number.
