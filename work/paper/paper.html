@@ -80,6 +80,22 @@ strong{ font-weight:600; }
    never scrolls sideways. */
 .tscroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; margin:18px 0 10px; }
 .tscroll table{ margin:0; }
+/* Scrolling the table sideways solved the overflow but created a new problem, found
+   on the phone AFTER the fix: scroll right to read a number and the row label has
+   gone. So the first column pins to the left edge while the numbers slide under it.
+   The backgrounds have to be opaque and match the row stripe exactly, or the
+   scrolled cells show through the pinned one. */
+.tscroll tbody tr:nth-child(odd){ background:var(--paper); }
+.tscroll tbody tr:nth-child(even){ background:#F4F5F4; }
+.tscroll thead th:first-child{
+  position:sticky; left:0; z-index:3; background:#fff;
+  box-shadow:1px 0 0 var(--line);
+}
+.tscroll tbody tr:nth-child(odd) > :first-child{ background:var(--paper); }
+.tscroll tbody tr:nth-child(even) > :first-child{ background:#F4F5F4; }
+.tscroll tbody > tr > :first-child{
+  position:sticky; left:0; z-index:2; box-shadow:1px 0 0 var(--line);
+}
 table{ width:100%; border-collapse:collapse; margin:18px 0 10px; font-size:15px; }
 th,td{ text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
 thead th{ background:#fff; color:var(--navy); font-weight:600; font-size:14px;
