@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which search pages should an editor open first? — Muhammad Saad Imran</title>
+<meta name="description" content="A ranked review queue for pages that under-capture clicks in search. Model vs a frozen baseline on client-grouped folds, with the limitations stated up front.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- All styling is inline on purpose. This page is deployed in two places - my
+     portfolio site and the internship repo - and a self-contained file cannot
+     drift between them the way two linked stylesheets could. -->
+<style>
+:root{
+  --navy:#1F3864; --ink:#14181F; --paper:#FAFAF8;
+  --accent:#2F6F4E; --line:#E6E7E2; --muted:#5b6470;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif; line-height:1.65;
+  background-image:radial-gradient(rgba(31,56,100,.06) 1px, transparent 1px);
+  background-size:34px 34px;
+}
+h1,h2,h3,.mono{ font-family:'Space Grotesk','Inter',sans-serif; }
+.wrap{ max-width:880px; margin:0 auto; padding:0 24px; }
+
+header{ border-bottom:1px solid var(--line); background:rgba(250,250,248,.9); }
+nav{ display:flex; align-items:center; gap:22px; padding:16px 24px; max-width:880px; margin:0 auto; }
+.mark{ width:38px; height:38px; border-radius:9px; background:var(--navy); color:var(--paper);
+  display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;
+  font-weight:700; font-size:17px; letter-spacing:1px; position:relative; flex:none; text-decoration:none; }
+.mark::after{ content:""; position:absolute; bottom:8px; left:10px; right:10px; height:2px;
+  border-radius:2px; background:var(--accent); }
+nav a.link{ color:var(--muted); text-decoration:none; font-size:15px; }
+nav a.link:hover{ color:var(--navy); }
+nav a.link[aria-current="page"]{ color:var(--navy); font-weight:500; }
+nav .spacer{ margin-left:auto; }
+
+main{ padding:52px 0 40px; counter-reset:sec; }
+h1{ font-size:clamp(27px,5.2vw,40px); color:var(--navy); letter-spacing:-.6px; line-height:1.18; margin-bottom:12px; }
+h2{ font-size:clamp(20px,3.6vw,25px); color:var(--navy); margin:46px 0 14px; letter-spacing:-.3px; scroll-margin-top:70px; }
+h2.num{ counter-increment:sec; }
+h2.num::before{ content:counter(sec) ". "; color:var(--accent); font-weight:700; }
+h3{ font-size:17px; color:var(--ink); margin:26px 0 8px; }
+p{ margin-bottom:15px; max-width:68ch; }
+ul,ol{ margin:0 0 16px 22px; max-width:68ch; } li{ margin-bottom:7px; }
+a{ color:var(--navy); }
+strong{ font-weight:600; }
+.kicker{ font-family:'Space Grotesk',sans-serif; font-size:12px; letter-spacing:1.6px;
+  text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+.mono{ font-size:14px; background:#fff; border:1px solid var(--line); border-radius:5px; padding:1px 6px; }
+
+.byline{ font-size:15px; color:var(--muted); padding-bottom:18px; border-bottom:1px solid var(--line); }
+.byline strong{ color:var(--ink); font-weight:500; }
+
+.abstract{ background:#fff; border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:12px; padding:22px 26px; margin:26px 0 30px; }
+.abstract h2{ margin:0 0 10px; font-size:14px; letter-spacing:1.4px; text-transform:uppercase;
+  color:var(--accent); }
+.abstract p{ margin:0; max-width:none; }
+
+.toc{ border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin-bottom:30px; background:#fff; }
+.toc h2{ margin:0 0 10px; font-size:12px; letter-spacing:1.4px; text-transform:uppercase; color:var(--muted); }
+.toc ol{ margin:0 0 0 18px; columns:2; column-gap:34px; max-width:none; }
+.toc a{ color:var(--navy); text-decoration:none; font-size:15px; }
+.toc a:hover{ text-decoration:underline; }
+@media (max-width:620px){ .toc ol{ columns:1; } }
+
+table{ width:100%; border-collapse:collapse; margin:18px 0 10px; font-size:15px; }
+th,td{ text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+thead th{ background:#fff; color:var(--navy); font-weight:600; font-size:14px;
+  border-bottom:2px solid var(--line); font-family:'Space Grotesk',sans-serif; }
+tbody tr:nth-child(even){ background:rgba(31,56,100,.025); }
+td.n,th.n{ text-align:right; font-variant-numeric:tabular-nums; }
+.win{ color:var(--accent); font-weight:600; }
+.tnote{ font-size:13px; color:var(--muted); font-style:italic; margin:0 0 22px; }
+
+figure{ margin:24px 0; }
+figure img{ width:100%; border:1px solid var(--line); border-radius:10px; display:block; }
+figcaption{ font-size:13.5px; color:var(--muted); margin-top:8px; }
+figcaption b{ color:var(--ink); font-weight:600; }
+.flabel{ font-family:'Space Grotesk',sans-serif; font-size:11px; letter-spacing:1.2px;
+  text-transform:uppercase; color:var(--accent); display:block; margin-bottom:5px; }
+
+.note{ border:1px solid var(--line); border-left:3px solid #b23b3b; background:#fff;
+  border-radius:10px; padding:16px 20px; margin:20px 0; }
+.note p:last-child{ margin-bottom:0; }
+.note b{ color:#8f2f2f; }
+
+.credit{ border-top:2px solid var(--line); margin-top:46px; padding-top:22px; font-size:15px; color:var(--muted); }
+.credit a{ color:var(--accent); }
+
+footer{ border-top:1px solid var(--line); margin-top:50px; padding:22px 0 40px; font-size:14px; color:var(--muted); }
+.flinks{ display:flex; flex-wrap:wrap; gap:18px; margin-bottom:12px; }
+.flinks a{ color:var(--muted); text-decoration:none; font-size:14px; }
+.flinks a:hover{ color:var(--navy); text-decoration:underline; }
+.fnote{ margin:0; font-size:13px; color:#8a919b; }
+
+@media print{
+  header,footer,.toc{ display:none; }
+  body{ background:#fff; background-image:none; }
+  figure img{ max-height:9cm; object-fit:contain; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="mark" href="index.html" aria-label="Home">SI</a>
+    <a class="link" href="index.html">Home</a>
+    <a class="link" href="proof.html">Proof</a>
+    <a class="link" href="paper.html" aria-current="page">Paper</a>
+    <a class="link" href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <p class="kicker">Research · Machine Learning internship at FlyRank AI</p>
+  <h1>Which search pages should an editor open first?</h1>
+  <p class="byline"><strong>Muhammad Saad Imran</strong> &middot; August 2026 &middot;
+  Lane 4, click-through opportunity scoring &middot;
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship">notebooks and code</a></p>
+
+  <!-- ===================== ABSTRACT ===================== -->
+  <div class="abstract">
+    <h2>Abstract</h2>
+    <p>An editor can review roughly fifty pages a week from a portfolio of hundreds of thousands, so
+    the decision worth supporting is not <em>which pages are underperforming</em> &mdash; thousands
+    are &mdash; but <em>which one to open first</em>. Using three months of Google Search Console data
+    from the FlyRank internship warehouse, I built features from January and February 2026 and defined
+    the outcome from March: a page under-captured clicks if its March click-through rate fell in the
+    bottom quarter of pages sharing its February search-position tier. A gradient-boosted classifier
+    was then compared against a frozen transparent rule on the same rows, the same client-grouped
+    folds, the same metric and the same tie policy. Across five folds in which no client appeared on
+    both sides, the model reached a mean precision@50 of <strong>0.784</strong> against the rule's
+    <strong>0.492</strong> and a base rate of <strong>0.216</strong>, winning in every fold &mdash;
+    though roughly half that margin rests on click-history features and the fold-to-fold spread runs
+    from 0.60 to 0.90. The output is a ranked review queue with reason codes: decision support for
+    ordering a week of editorial attention, not a claim that editing a page produces clicks.</p>
+  </div>
+
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#method">Methodology</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#limits">Limitations</a></li>
+      <li><a href="#recs">Ranked recommendations</a></li>
+      <li><a href="#repro">Reproducibility</a></li>
+      <li><a href="#credit">Acknowledgments</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== 1. INTRODUCTION ===================== -->
+  <h2 class="num" id="intro">Introduction</h2>
+
+  <p>An editor sits down on Monday with a list of pages and about fifty reviews' worth of time. The
+  portfolio runs to hundreds of thousands of pages. Asking "which pages are underperforming?" returns
+  a list far longer than the week, so the question does no work. The question that does work is
+  narrower and harder: <strong>of everything I could open, which one first?</strong></p>
+
+  <p>That is a ranking problem, and it has a specific shape. The cost of a wrong call is not a wrong
+  answer &mdash; it is an hour spent on a page that was fine, while a page that needed attention sat
+  in the queue. So the metric has to measure the top of the list, not the average of it.</p>
+
+  <p>I chose the click-through opportunity lane: find pages that are <em>shown</em> in search but
+  under-capture clicks relative to comparable pages. A page ranking in position eight that converts
+  well is not the problem. A page in position eight that converts far below other position-eight
+  pages is losing clicks that already exist &mdash; the impressions are there, the click is not.</p>
+
+  <h3>The obvious rule, and why it failed</h3>
+
+  <p>My first approach was a transparent rule with no model in it. Every page sits in a search-position
+  tier; score each page by how far its click-through rate falls below the typical rate for its tier,
+  and rank by that gap. It is explainable, cheap, and requires no training.</p>
+
+  <p>Before building anything on top of it, I tested whether the assumption held. It did not. The
+  tier rule was only <strong>5.6% better</strong> than ignoring position entirely and predicting one
+  flat number for every page. Worse, its top 100 pages all received the <strong>same score</strong>
+  &mdash; one distinct value across the entire top of the queue &mdash; so the rule could not order
+  the one part of the list that actually gets used.</p>
+
+  <figure>
+    <span class="flabel">Figure 1</span>
+    <img src="ml03-lane.jpg" alt="Executed notebook output showing the position-tier baseline beating a flat prediction by only 5.6 percent.">
+    <figcaption><b>The result that killed the first idea.</b> The position-tier rule improved on a
+    single flat prediction by 5.6%. Output from the executed notebook, not a redrawing of it.</figcaption>
+  </figure>
+
+  <p>That negative result set up everything after it. The rule became a <em>frozen baseline</em> &mdash;
+  something a model has to beat on identical terms &mdash; rather than the product.</p>
+
+  <!-- ===================== 2. DATA ===================== -->
+  <h2 class="num" id="data">Data</h2>
+
+  <p><strong>Source.</strong> The FlyRank ML Internship warehouse, a pseudonymised public-safe release
+  of Google Search Console and Google Analytics data. Pages and clients appear only as hashed
+  identifiers. No page URL, client name or search query appears anywhere in this paper, in the
+  notebooks, or in any committed output.</p>
+
+  <p><strong>Tables used.</strong> <span class="mono">fact_content_daily_performance</span>, read one
+  monthly partition at a time, and <span class="mono">dim_content</span> for page metadata.</p>
+
+  <h3>Date windows, and the boundary that defines the whole study</h3>
+
+  <table>
+    <thead><tr><th>Window</th><th>Months</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td>Features</td><td>January + February 2026</td><td>Everything knowable at the moment of the decision</td></tr>
+      <tr><td>Outcome</td><td>March 2026</td><td>The label. Never a feature</td></tr>
+      <tr><td>Sealed</td><td>June 2026</td><td><strong>Never queried.</strong> Held for a single blind evaluation later</td></tr>
+    </tbody>
+  </table>
+  <p class="tnote">The decision is taken at the end of February. Anything from March onwards is the
+  future and cannot inform it.</p>
+
+  <h3>What was excluded, and why</h3>
+
+  <p>203,074 pages appeared in at least one of the three months. The study population is
+  <strong>40,152 pages across 24 clients</strong>, after four filters:</p>
+
+  <ul>
+    <li><strong>Present in all three months.</strong> A page needs January and February to have
+    features and March to have an outcome.</li>
+    <li><strong>At least 500 February impressions.</strong> A page nobody sees is not an editorial
+    opportunity, and a click-through rate on twelve impressions is noise.</li>
+    <li><strong>At least 100 March impressions.</strong> March click-through rate is a rate; on three
+    impressions it carries no information.</li>
+    <li><strong>Real February position data.</strong> In this warehouse an average position of zero
+    means <em>no data</em>, not rank zero &mdash; a distinction that would silently corrupt the tier
+    assignment if treated as a number.</li>
+  </ul>
+
+  <p>Two field families were excluded deliberately rather than by filtering.
+  <span class="mono">trend_direction</span> and <span class="mono">trend_pct</span> are derived from
+  the outcome and would leak it. Hashed page and client identifiers are used for <em>grouping</em>
+  during validation and are never features &mdash; an identifier as a feature is a memorisation
+  channel, not a signal.</p>
+
+  <p>Missing values were kept missing. The model handles them natively, and replacing a missing value
+  with zero would assert that nothing happened when in fact nothing was recorded.</p>
+
+  <!-- ===================== 3. METHODOLOGY ===================== -->
+  <h2 class="num" id="method">Methodology</h2>
+
+  <h3>Assumptions, stated so they can be disagreed with</h3>
+  <ul>
+    <li>Comparable pages are pages in the same February <em>search-position tier</em>. Comparing a
+    top-three page's click-through rate against a deep page's would only rediscover position.</li>
+    <li>An editor's constraint is attention, roughly fifty reviews a week, so the useful output is an
+    ordered queue rather than a classification of every page.</li>
+    <li>A page's own recent history is legitimate evidence about its near future.</li>
+  </ul>
+
+  <h3>Label definition</h3>
+  <p>A page <strong>under-captured clicks</strong> if its March click-through rate fell below the
+  25th percentile of March click-through rate <em>for its February position tier</em>. The percentile
+  cut is computed <strong>inside each training fold</strong> and applied to the held-out fold &mdash;
+  never over the whole dataset. This is a proxy for editorial value, and I name it as one: it measures
+  under-capture relative to peers, not revenue.</p>
+
+  <h3>Features</h3>
+  <p>Eleven numeric fields and two categorical, all knowable by 28 February: January and February
+  impressions and clicks, January and February click-through rate, February average position, a
+  January-to-February impressions ratio, the count of February days the page appeared in search, word
+  count, content type and main intent &mdash; plus one <strong>injected pure-noise column</strong> that
+  serves as a significance floor for the importance analysis.</p>
+
+  <h3>Baseline</h3>
+  <p>The frozen Week-4 rule described in the introduction: expected click-through rate is the median
+  for the page's February tier; the score is the shortfall multiplied by February impressions. Its
+  tier medians are refitted <strong>inside every training fold</strong>. Computing them once over the
+  whole panel would let the rule see held-out clients' data before being tested on them &mdash; a
+  subtle leak that would flatter the baseline, not the model.</p>
+
+  <h3>Validation design</h3>
+  <p>Five-fold <span class="mono">GroupKFold</span> grouped on the hashed client identifier, so a
+  client's pages are never on both sides of a split. Zero client overlap is asserted in code rather
+  than assumed. The model's internal early stopping is switched off: it carves out a validation set at
+  random with no knowledge of client, which would leak clients inside every fold while I was carefully
+  holding them out on the outside.</p>
+
+  <p>Model and baseline sit the same exam &mdash; <strong>same rows, same folds, same metric and K,
+  same tie policy</strong>. Ties matter here more than they sound, because the baseline's known failure
+  is producing identical scores; the tie-break is written down (score, then February impressions, then
+  page id) and used identically by every competitor.</p>
+
+  <h3>Leakage checks</h3>
+  <p>Three, run explicitly rather than assumed:</p>
+  <ol>
+    <li><strong>Timeline audit.</strong> Every feature traced to its source window. All sit before
+    March. This is what clears the click-history features: January and February clicks are knowable at
+    decision time. The rule is a temporal boundary, not a ban on a data type.</li>
+    <li><strong>Harness test.</strong> March click-through rate &mdash; the column the label is computed
+    from &mdash; was deliberately injected as a feature. Precision@50 went from 0.784 to a clean
+    <strong>1.000</strong>. A validation setup that cannot produce that jump cannot detect leakage, and
+    every other number here would be unfalsifiable.</li>
+    <li><strong>Population audit.</strong> The eligibility filters were checked for outcome-window
+    information. They contain some, and Section 5 states exactly how much.</li>
+  </ol>
+
+  <figure>
+    <span class="flabel">Figure 2</span>
+    <img src="ml04-leakage.png" alt="Notebook output showing R squared rising from 0.037 to 0.874 when a label-derived column is added, then removed.">
+    <figcaption><b>What leakage looks like on this warehouse.</b> Adding one column derived from the
+    answer moved an early model from an honest R&sup2; of 0.037 to 0.874 &mdash; near-perfect while
+    cheating. Run deliberately, in week four, to learn the shape of it.</figcaption>
+  </figure>
+
+  <!-- ===================== 4. RESULTS ===================== -->
+  <h2 class="num" id="results">Results</h2>
+
+  <p>All figures below are means over five client-grouped folds, on 40,152 pages across 24 clients.
+  <strong>Base rate 0.216</strong> &mdash; the share of pages that under-captured &mdash; is printed
+  beside every score, because a precision figure without its base rate says nothing.</p>
+
+  <table>
+    <thead><tr><th>Method</th><th class="n">precision@20</th><th class="n">precision@50</th><th class="n">sd across folds</th></tr></thead>
+    <tbody>
+      <tr><td>Base rate (random ordering)</td><td class="n">0.216</td><td class="n">0.216</td><td class="n">&mdash;</td></tr>
+      <tr><td>The frozen rule (baseline)</td><td class="n">0.560</td><td class="n">0.492</td><td class="n">&mdash;</td></tr>
+      <tr><td>Logistic regression</td><td class="n">&mdash;</td><td class="n">0.604</td><td class="n">&mdash;</td></tr>
+      <tr><td>Decision tree, depth 3</td><td class="n">&mdash;</td><td class="n">0.692</td><td class="n">&mdash;</td></tr>
+      <tr><td>Random forest</td><td class="n">&mdash;</td><td class="n">0.760</td><td class="n">0.089</td></tr>
+      <tr><td><strong>Gradient boosting</strong></td><td class="n win">0.850</td><td class="n win">0.784</td><td class="n">0.113</td></tr>
+    </tbody>
+  </table>
+  <p class="tnote">Same rows, same folds, same metric, same tie policy for every row.</p>
+
+  <p><strong>The model beats the rule in every fold, not on average.</strong> Per fold the model
+  scored 0.90 / 0.78 / 0.84 / 0.80 / 0.60 against the rule's 0.50 / 0.66 / 0.38 / 0.50 / 0.42. That
+  matters because a mean can hide one lucky fold; here it does not.</p>
+
+  <p><strong>Complexity was not free money.</strong> A depth-3 decision tree &mdash; a model that can
+  be printed and read in full &mdash; already reaches 0.692, and a random forest reaches 0.760 with the
+  <em>lowest</em> fold-to-fold spread of any method. Most of the available lift comes from using the
+  features at all, not from the boosting on top. If asked to defend one model in a room, I would defend
+  the forest.</p>
+
+  <h3>How much of this is the honest split?</h3>
+
+  <p>I described the client-level holdout as a strength for several weeks without ever measuring what
+  it was worth. Re-running the identical model under a plain random split &mdash; clients allowed on
+  both sides &mdash; gives 0.836 against the grouped 0.784, an apparent cost of 0.052.</p>
+
+  <p>That reading is wrong, and finding out why changed the conclusion. The <em>base rate</em> also
+  moves between the two splits, from 0.216 to 0.246, because the label cut is fitted on the training
+  fold and transfers imperfectly to unseen clients. <strong>0.030 of the 0.052 &mdash; 57% of it &mdash;
+  is the target moving, not skill lost.</strong> Measured as lift over its own base rate the gap is
+  0.022; measured as a multiple of base rate the grouped model is slightly <em>ahead</em>, 3.63&times;
+  against 3.40&times;.</p>
+
+  <figure>
+    <span class="flabel">Figure 3</span>
+    <img src="ml09-split.png" alt="Notebook output comparing a random split and a client-grouped split, showing the raw gap of 0.052 and the base-rate-adjusted gap of 0.022.">
+    <figcaption><b>The correction.</b> The raw gap between a dishonest and an honest split is 0.052;
+    once the base rate is accounted for it is 0.022. The first number was the one I nearly published.</figcaption>
+  </figure>
+
+  <h3>Effect size, not just direction</h3>
+
+  <p>Across the five paired folds, Cohen's <em>d</em> for model against rule is <strong>2.04</strong>
+  &mdash; large by any convention. It is computed on five folds, three of which hold a single test
+  client, so it is an order of magnitude rather than a measurement. Notably the grouped split has the
+  <em>larger</em> mean advantage (+0.292 against +0.276) but the <em>smaller</em> effect size, because
+  the folds disagree more once clients are separated. Magnitude and reliability are different
+  questions.</p>
+
+  <h3>What the model leans on</h3>
+
+  <p>Permutation importance on held-out data, with the injected noise column as the significance
+  floor and the documentation's own rule (mean &minus; 2&middot;sd &gt; 0):</p>
+
+  <ul>
+    <li><strong>Roughly half the advantage is borrowed from click history.</strong> Removing the four
+    click-derived features drops the model from 0.784 to <strong>0.604</strong> &mdash; still ahead of
+    the rule, by a 0.112 margin instead of 0.292. The depth-3 tree collapses further, 0.692 to 0.364.</li>
+    <li><strong>Two features are dead weight.</strong> Content type scores exactly 0.0000 &mdash; the
+    model never splits on it. January impressions fail the significance test (0.0040 &plusmn; 0.0033)
+    and sit barely above the injected noise, which itself ranked 12th of 13.</li>
+    <li>Four feature pairs exceed |r| = 0.70, with January and February clicks at 0.95, so those
+    importances are depressed for both members of each pair and should be read as a floor.</li>
+  </ul>
+
+  <h3>Where it is wrong</h3>
+
+  <p>The errors have one recognisable shape. In the worst fold &mdash; precision 0.600 against a best
+  of 0.900 &mdash; every inspected miss had a February click-through rate of <strong>exactly
+  0.000%</strong> and a March rate that recovered on its own to between 0.090% and 0.387%. The model
+  learned that a page converting nothing is a strong signal; for these pages February was simply a bad
+  month. A two-month feature window cannot separate "this page under-converts" from "this page had one
+  quiet month", and no amount of tuning changes that.</p>
+
+  <p>A belief of mine was also reversed. In week four I named near-zero-click pages as the picks I
+  trusted <em>least</em>. The model does the opposite: it puts more of them at the top and is right far
+  more often than the rule on them. Across the full panel, pages with real impressions and no February
+  clicks under-captured <strong>47.4%</strong> of the time against <strong>17.8%</strong> for everything
+  else. My caution was not supported, and recording that is more useful than quietly dropping it.</p>
+
+  <!-- ===================== 5. LIMITATIONS ===================== -->
+  <h2 class="num" id="limits">Limitations and honest framing</h2>
+
+  <div class="note">
+    <p><b>Scope.</b> This queue ranks pages that were <strong>still receiving search impressions
+    during the outcome month</strong>. A page that vanished from search entirely cannot be scored at
+    all &mdash; March click-through rate is a rate, and a rate needs a denominator. Measured:
+    <strong>979 of 41,234</strong> February-eligible pages (2.4%) produced no March row at all, with a
+    median of 864 February impressions, so they were genuinely visible before they went. They are
+    structurally absent from this work and are arguably the pages most in need of attention.</p>
+  </div>
+
+  <p><strong>The eligibility filter reads the outcome month, and I did not disclose that until late.</strong>
+  Requiring 100 March impressions removes 102 pages (0.3%); removing that filter moves the score
+  <em>up</em> to 0.828, so it was never inflating anything. The requirement that a page appear in all
+  three months is the one that matters, and it is not patchable &mdash; it is a property of choosing a
+  rate as the label.</p>
+
+  <p><strong>Roughly half the signal is click history</strong>, measured once. The model still clears
+  the rule without it, but by a much narrower margin, and that is the number I would quote to someone
+  deciding whether to build on this.</p>
+
+  <p><strong>Five folds, three holding a single test client.</strong> The spread runs 0.60 to 0.90.
+  Treat the headline as directional.</p>
+
+  <p><strong>Nothing here is causal.</strong> The model observed which pages under-captured clicks. It
+  says nothing about whether editing them produces clicks &mdash; that needs a controlled comparison
+  nobody has run. The output is decision support for <em>ordering attention</em>, and no more.</p>
+
+  <p><strong>One negative result, reported because it is a result.</strong> I expected declining pages
+  to be the priority &mdash; the familiar content-decay story. Across the panel every
+  month-on-month momentum bucket sits between 0.198 and 0.242 against a 0.225 base rate:
+  <strong>momentum barely separates pages in either direction</strong>. Below-tier conversion is what
+  separates them. Conditioned on already converting below tier, slipping pages do carry signal, so both
+  views have to be read together &mdash; but decline on its own is not the priority signal it is usually
+  assumed to be.</p>
+
+  <p><strong>The sealed month is untouched.</strong> June 2026 has never been queried, across every
+  notebook in this project. No claim in this paper rests on it.</p>
+
+  <!-- ===================== 6. RECOMMENDATIONS ===================== -->
+  <h2 class="num" id="recs">Ranked recommendations</h2>
+
+  <p>The model's output is a queue. Its most useful property is not the ordering of the top &mdash; it
+  is what it sets aside. <strong>Half the portfolio (20,061 of 40,152 pages) falls into a
+  &ldquo;watch only&rdquo; group whose under-capture rate is 0.083 against a 0.225 base rate.</strong>
+  An editor who ignores that half is ignoring pages that under-capture less than a third as often as
+  average. Not spending the week in the wrong half is worth more than the ordering of the right half.</p>
+
+  <h3>Queue length is the only dial</h3>
+
+  <p>There is no probability threshold to tune. <em>K</em>, the number of pages handed over, is the
+  threshold.</p>
+
+  <table>
+    <thead><tr><th class="n">Queue length K</th><th class="n">precision@K</th><th class="n">&times; base rate</th><th class="n">Real opportunities</th><th class="n">Hours spent for nothing</th></tr></thead>
+    <tbody>
+      <tr><td class="n">10</td><td class="n">0.900</td><td class="n">3.99</td><td class="n">9</td><td class="n">1</td></tr>
+      <tr><td class="n">20</td><td class="n">0.950</td><td class="n">4.22</td><td class="n">19</td><td class="n">1</td></tr>
+      <tr><td class="n">30</td><td class="n">0.967</td><td class="n">4.29</td><td class="n">29</td><td class="n">1</td></tr>
+      <tr><td class="n">50</td><td class="n">0.940</td><td class="n">4.17</td><td class="n">47</td><td class="n">3</td></tr>
+      <tr><td class="n">100</td><td class="n">0.830</td><td class="n">3.68</td><td class="n">83</td><td class="n">17</td></tr>
+      <tr><td class="n">200</td><td class="n">0.820</td><td class="n">3.64</td><td class="n">164</td><td class="n">36</td></tr>
+    </tbody>
+  </table>
+  <p class="tnote">Pooled across folds. This is a different measurement from the per-fold precision@50
+  in Section 4 &mdash; pooled takes the best 50 of 40,152, per-fold takes the best 50 of roughly 8,030,
+  five times. They are not interchangeable and comparing them would overstate the result.</p>
+
+  <figure>
+    <span class="flabel">Figure 4</span>
+    <img src="ml10_precision_at_k.png" alt="Chart of precision at K against queue length, with the base rate marked as a floor.">
+    <figcaption><b>A shorter queue is a more accurate queue.</b> The real decision sits between fifty
+    and a hundred: doubling the week's work roughly doubles the finds and multiplies the wasted hours
+    by nearly six. The dip at K=10 is a single wrong page, not a pattern.</figcaption>
+  </figure>
+
+  <h3>What to do with each kind of page</h3>
+
+  <table>
+    <thead><tr><th>Archetype</th><th class="n">Pages</th><th>Recommended first action</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Verify first</strong> &mdash; real impressions, zero clicks</td><td class="n">6,421</td>
+          <td>Confirm the page is reachable, indexed and not a redirect <em>before</em> touching copy. More often a broken thing than a copywriting problem</td></tr>
+      <tr><td><strong>Big under-converter</strong> &mdash; high impressions, below tier</td><td class="n">4,058</td>
+          <td>Rewrite title and meta description. Highest value per hour: the traffic already exists, the click does not</td></tr>
+      <tr><td><strong>Growing but diluted</strong> &mdash; impressions up &gt;50%, below tier</td><td class="n">4,286</td>
+          <td>Check which queries it now matches. Usually shown wider and matching worse &mdash; tighten to its actual intent rather than broadening further</td></tr>
+      <tr><td><strong>Slipping</strong> &mdash; impressions falling, below tier</td><td class="n">1,789</td>
+          <td>Refresh facts and examples, then request reindexing. See the momentum caveat in Section 5</td></tr>
+      <tr><td><strong>Thin</strong> &mdash; short page, below tier</td><td class="n">717</td>
+          <td>Expand to answer the question fully, then revisit the title</td></tr>
+      <tr><td><strong>Other under-converter</strong></td><td class="n">2,820</td>
+          <td>Read against query intent; decide rewrite versus refresh</td></tr>
+      <tr><td><strong>Watch only</strong></td><td class="n">20,061</td>
+          <td>No action. Present for completeness, not recommended for review</td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <span class="flabel">Figure 5</span>
+    <img src="ml10_archetype_mix.png" alt="Bar chart of the archetype mix in the top fifty pages, annotated with how often each archetype was correct.">
+    <figcaption><b>The top of the queue is not evenly mixed.</b> Big under-converters dominate and are
+    right 98% of the time; the zero-click group is right 83% &mdash; which is why it is ranked for
+    verification rather than for a rewrite.</figcaption>
+  </figure>
+
+  <h3>Rules for the person using it</h3>
+
+  <p>Every reason code attached to a page is a fact that can be checked by opening the page. They exist
+  so an editor can <strong>overrule</strong> the queue &mdash; if a code contradicts what they know, that
+  is a signal to investigate, and overruling is a correct use.</p>
+
+  <div class="note">
+    <p><b>The queue is not a safe list.</b> It says which pages to review first. It never says a page
+    is fine. Absence from it means a low score, no score, or outside the population &mdash; and those
+    are not the same thing. Acting on absence is the one misuse that would do real harm.</p>
+    <p><b>Do not automate the actions</b>, and <b>do not retrain on a drift alert</b> &mdash;
+    data-quality bugs look exactly like drift, and retraining on unchecked data bakes the bug in.</p>
+  </div>
+
+  <p><strong>The largest operational risk is concentration, not accuracy.</strong> The top fifty draws
+  from 8 of 24 clients, and a single client holds <strong>44%</strong> of it. The pages are genuine;
+  nobody should be handed that week without being told.</p>
+
+  <h3>Monitoring, given that the truth arrives late</h3>
+
+  <p>Whether a page under-captured in March is only knowable in April. Model quality cannot be watched
+  directly, so monitoring is proxy: watch the inputs and the outputs for signs the world changed.</p>
+
+  <p>Choosing what to watch had to be measured rather than assumed. My first trigger was "twice the
+  largest normal month-to-month move" &mdash; but page impressions shift with a population stability
+  index of <strong>1.346</strong> between two ordinary months, five times past the conventional 0.25
+  "major shift" line. That rule produced an alarm that could never fire. A feature whose normal month
+  is already a major shift cannot detect drift at all. Impressions are now a data-quality check;
+  click-through rate, stable at 0.031, is the drift sentinel.</p>
+
+  <!-- ===================== 7. REPRODUCIBILITY ===================== -->
+  <h2 class="num" id="repro">Reproducibility</h2>
+
+  <p>Audited against the <a href="https://www.cs.mcgill.ca/~jpineau/ReproducibilityChecklist.pdf">Machine
+  Learning Reproducibility Checklist</a> (Pineau, v2.0).</p>
+
+  <table>
+    <thead><tr><th>Item</th><th>This work</th></tr></thead>
+    <tbody>
+      <tr><td>Dataset statistics</td><td>203,074 pages seen; 40,152 eligible; 24 clients; 3 monthly partitions</td></tr>
+      <tr><td>Splits</td><td>5-fold <span class="mono">GroupKFold</span> on hashed client id; zero overlap asserted in code</td></tr>
+      <tr><td>Excluded data and preprocessing</td><td>Section 2 in full; missing values kept missing</td></tr>
+      <tr><td>Dataset link</td><td>FlyRank ML Internship warehouse (Hugging Face, token-gated to interns)</td></tr>
+      <tr><td>Dependencies</td><td>duckdb, pandas, numpy, scikit-learn, matplotlib &mdash; Google Colab default versions, August 2026</td></tr>
+      <tr><td>Training and evaluation code</td><td><a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/tree/main/work/notebooks">work/notebooks/</a> &mdash; executed, with outputs</td></tr>
+      <tr><td>Hyperparameter search</td><td>Boosting iterations chosen over {50, 100, 200, 400} by an <em>inner</em> grouped split of fold 1's training clients (0.820 / 0.800 / 0.833 / 0.787); 200 fixed for every outer fold. Learning rate 0.06, 31 leaf nodes, L2 1.0</td></tr>
+      <tr><td>Number of runs</td><td>5 outer folds &times; 5 methods, plus a 5-fold sensitivity run and a 3-fold inner search</td></tr>
+      <tr><td>Metric definition</td><td>precision@K on a ranking ordered by score, then February impressions, then page id</td></tr>
+      <tr><td>Central tendency and variation</td><td>Fold means reported with per-fold values and standard deviation, never a mean alone</td></tr>
+      <tr><td>Runtime</td><td>~4 min for the three warehouse scans (cached thereafter); seconds per model fit</td></tr>
+      <tr><td>Compute</td><td>Google Colab, CPU runtime, free tier</td></tr>
+      <tr><td>Seeds</td><td><span class="mono">SEED = 42</span> throughout. <span class="mono">GroupKFold</span> is deterministic and takes none</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>One reproducibility defect worth recording.</strong> An early version assigned the noise
+  column by row position, so rebuilding the data pull in a different order silently moved every number.
+  Fixing the row order by page id before generating noise made consecutive runs byte-identical. It was
+  found by re-running, not by reading the code &mdash; which is the argument for re-running.</p>
+
+  <p>Notebooks, in order:
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/blob/main/work/notebooks/w03_data_contract.ipynb">data contract</a> &middot;
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/blob/main/work/notebooks/w04_baseline_score.ipynb">baseline</a> &middot;
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/blob/main/work/notebooks/w05_model.ipynb">model</a> &middot;
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/blob/main/work/notebooks/w06_validation_audit.ipynb">validation audit</a> &middot;
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/blob/main/work/notebooks/w07_action_playbook.ipynb">action playbook</a>.
+  Every number quoted here traces to a committed metrics file in
+  <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship/tree/main/work/outputs">work/outputs/</a>.</p>
+
+  <!-- ===================== 8. ACKNOWLEDGMENTS ===================== -->
+  <h2 class="num" id="credit">Acknowledgments and data credit</h2>
+
+  <div class="credit">
+    <p>Built on the <strong>FlyRank ML Internship dataset</strong> &mdash;
+    <a href="https://flyrank.ai">flyrank.ai</a>. A pseudonymised, public-safe release of real
+    production search data, made available to interns on the FlyRank AI Machine Learning track.</p>
+    <p>Thanks to the FlyRank team for the weekly sessions on validation and honest claim language,
+    which shaped the parts of this paper I am least embarrassed by &mdash; particularly the habit of
+    reporting a base rate beside every score, and of measuring a safeguard before describing it as one.</p>
+    <p>Any errors are mine.</p>
+  </div>
+
+</main>
+
+<footer class="wrap">
+  <nav class="flinks" aria-label="Find me elsewhere">
+    <a href="index.html">Home</a>
+    <a href="proof.html">Proof</a>
+    <a href="https://github.com/Saad-Imran-Toori/flyrank-ml-internship">Repository</a>
+    <a href="https://linkedin.com/in/m-saad-imran">LinkedIn</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <p class="fnote">Built by hand in plain HTML and CSS. Hosted on GitHub Pages.</p>
+</footer>
+
+</body>
+</html>
