@@ -1,0 +1,760 @@
+FLYRANK AI — MACHINE LEARNING INTERNSHIP
+Intern: Saad Imran  (BSE233117, CUST Islamabad)
+Started: 01 July 2026  ·  Self-paced
+========================================
+
+All internship deliverables, organised by week. Everything here is also
+committed to GitHub:
+https://github.com/Saad-Imran-Toori/flyrank-ml-internship  (see the /work folder)
+
+Note: the weekly university progress reports are kept OFF GitHub on purpose —
+they contain private email addresses and correspondence. They live only in
+these week folders and are sent to my university supervisor directly.
+
+
+FOLDER STRUCTURE
+----------------
+
+Week 1/  (01–03) + Internship report WEEK 01.docx
+Week 2/  (04–07) + Internship report WEEK 02.docx
+Week 3/  (08–11) + Internship report WEEK 03.docx
+Week 4/  (12–17)
+Week 5/  (18–23)
+Week 6/  (24–25, 29)
+Week 7/  (26)
+Week 8/  (27–28)  ML track finished 10/10
+University Documents/  (CUST policy, SoPs, evaluation form)
+Anthropic Certificates/
+Certification/  — the three FlyRank credential documents (see CERTIFICATION below)
+Student Report Forms/  — CUST report forms 1–4, the Student Internship Activity Log,
+                        and the final Summer Internship Report (PDF + editable .docx)
+Supervisor Evaluation Forms/  — CUST Site Supervisor Evaluation Forms (reports 2–4)
+Build Scripts/  — the scripts that regenerate notebooks and fill the CUST forms
+CV/
+Notes/  — course notes + the one-page project revision sheet
+flyrank-internship-confirmation-letter-muhammad-saad-imran.pdf
+INDEX.txt
+
+
+WEEK 1  —  Monday 13 July 2026 to Sunday 19 July 2026
+           complete, all 5 required assignments submitted
+---------------------------------------------------------
+01 - FL-01 Workflow Audit & Tool Setup        [General AI Fluency, 4h]
+02 - What Are You Proving                      [General AI Fluency, 2h]
+03 - Draw the Path (Sitemap + Toolkit)         [General AI Fluency, 3h]
+     (ML-01 Run the Starter Notebooks + ML-02 Research Question / Lane 4
+      also submitted this week — those live in the GitHub repo only:
+      work/notebooks/w01_research_question.ipynb)
+     Internship report WEEK 01.docx — weekly report submitted to my
+     university supervisor, Mr. Temour Abbas.
+
+
+WEEK 2  —  Monday 20 July 2026 to Sunday 26 July 2026
+           complete, all 4 required assignments submitted
+---------------------------------------------------------
+04 - ML-03 Frame Your Lane as an ML Task       [Machine Learning, 4h]
+     Lane 4 framed as a ranking/scoring ML task. Key finding: the
+     position-tier rule beats a flat guess by only 5.6%, and its top 100
+     pages all tie at one score.
+05 - Frame It as Cases                         [General AI Fluency, 3h]
+     Voice card + two three-beat case studies (DecisAI, FlyRank work),
+     bio, contact copy, real before/after.
+06 - The Prompt Ladder                         [General AI Fluency, 2h]
+     One weak prompt improved across five versions; version 1 got
+     confidently WRONG (the honest "made it worse" finding).
+07 - FL-02 Prompt Fundamentals                 [General AI Fluency, 6h]
+     Six-version email-prompt ladder on a real task + Claude-vs-ChatGPT
+     cross-model comparison + reusable template.
+     Also watched: ML Week-2 session "Intro to ML Systems" (Mr. Mirza).
+     Internship report WEEK 02.docx — weekly report for my supervisor.
+
+
+WEEK 3  —  Monday 27 July 2026 to Sunday 02 August 2026
+           in progress
+-------------------------------------------------------
+08 - ML-04 Data Contract                       [Machine Learning, 3h]  DONE
+     Data contract for Lane 4 on the REAL Hugging Face warehouse (month
+     2026-03). One row = one page; grain verified (0 duplicates); slice
+     = 176,738 pages; availability filtered with IS TRUE (3.61M of 9.84M
+     page-day rows have GSC data). Five honest features + the leakage
+     trap on real data: R^2 jumps 0.037 -> 0.874 when gsc_clicks (the CTR
+     numerator) is added, then removed. Executed notebook committed.
+     (Local copy here is the code version; the executed one with outputs
+      is on GitHub.)
+
+09 - Identity Kit                               [General AI Fluency, 3h]  DONE
+     Two free fonts (Space Grotesk + Inter), a four-colour palette with hex
+     codes, an SI monogram logo/favicon, and a two-line style note added to
+     my Claude Project. Files: one-page kit (html + png), logo, README.
+
+10 - Curate Your Images                         [General AI Fluency, 3h]  DONE
+     Image set mapped to my sitemap: real captures of my own work (ML-04
+     leakage output, Lane 4 notebook, sitemap, Claude Project) plus a real
+     photo for About. Only the hero texture and a 3-icon set are generated,
+     in one consistent style. Includes the graded rejection note (why I
+     rejected the "glowing AI-brain hero" cliché).
+
+11 - Content Map                                [General AI Fluency, 2h]  DONE
+     One-line claim, page -> section -> case -> CTA map (Proof leads with
+     DecisAI), every CTA laddering to one action (email me to set up a
+     call), plus an honest "still need to gather" list.
+
+     Week 3 progress report: Internship report WEEK 03.docx
+
+
+WEEK 4  —  Monday 03 August 2026 to Saturday 08 August 2026
+           complete, all 6 required items submitted
+-----------------------------------------------------------
+12 - ML-07 Baseline Action Score                [Machine Learning, 5h]  DONE
+     The transparent baseline my Week-5 model must beat, on the real
+     warehouse. Two signal checks: CTR-vs-position CONFIRMED (0.236% ->
+     0.000%); volume-vs-CTR came back OPPOSITE (0.142% -> 0.200%), which
+     corrected my rule before I built it. One rule (score, reason code
+     low_ctr_visible, action "review title & meta"), a 30,616-row ranked
+     queue, and a top-10 review that found 7 of 10 were effectively
+     zero-click pages. Files: w04_baseline_score.ipynb.
+     (Local copy here is the code version; the executed one with outputs
+      is on GitHub.)
+
+13 - Empty but Live (Portfolio Site)            [General AI Fluency, 2h]  DONE
+     Portfolio shipped live at https://saad-imran-toori.github.io via
+     GitHub Pages (own repo: Saad-Imran-Toori.github.io), confirmed on a
+     second device. Uses the Week-3 identity kit. Files: index.html,
+     favicon, laptop + mobile screenshots.
+
+14 - Three Roads (Stack Choice)                 [General AI Fluency, 3h]  DONE
+     Compared three stacks (plain HTML on GitHub Pages / static site
+     generator / React+Next.js), pressure-tested them, and chose the
+     simplest. Deciding reason: near-zero maintenance. Backend answered
+     honestly as "not yet". Files: Stack-Rationale.md.
+
+15 - Ship an Automation Workflow                [General AI Fluency, 7h]  DONE
+     A four-step "draft, critique, revise" pipeline for my weekly report,
+     built as a Claude Project: gather -> draft -> critique -> revise.
+     Five real runs (Run 1 = 20m29s; runs 2-5 = 40m10s) against a manual
+     baseline of 90-120 min. Best catches: it noticed I was trying to close
+     a week that had not finished yet, that ML-05/ML-06 were missing from
+     my sequence, and that a baseline figure I quoted did not appear in my
+     own earlier notes. Files: Workflow-Walkthrough.md, step-diagram.png.
+
+16 - Agent Concepts and MCP Basics              [General AI Fluency, 5h]  DONE
+     Explainer (895 words) on workflow vs agent, the three MCP primitives
+     (tools / resources / prompts), and three real MCP tool tasks run in
+     Claude Desktop: (1) read my D-drive archive, (2) fetch my live site
+     saad-imran-toori.github.io, (3) execute Python and write a new file.
+     Names the concrete agent upgrade to my FL-04 pipeline (give the gather
+     step tools + a goal) and its honest risk: an agent with repo access
+     that misreads my history produces a wrong report WITH citations.
+     Files: Agent-and-MCP-Explainer.md, README.md, mcp-task3-output.txt,
+     evidence screenshots/.
+
+17 - VIDEO: Build the Systems That Build Software  [Machine Learning, 90 min]  DONE
+     Live session with Mr. Mirza Asceric — "Harness Engineering: 29 Tips to
+     Build the Systems That Build Software". Watched and marked submitted on
+     the portal. Files: session screenshots/.
+
+     Week 4 progress report: Internship report WEEK 04.docx
+
+
+WEEK 5  —  6 of 6 assignments done
+           (Professional Setup & Security Baseline was locked - lead review
+            pending - so it is not counted here)
+-----------------------------------------------------------------------
+18 - ML-08 Capstone Modeling Lane               [Machine Learning, 6h]  DONE
+     The model finally meets the frozen Week-4 baseline, on the same exam:
+     same rows, same folds, same metric + K, same tie policy. Time-aware
+     design (features Jan+Feb, label March, June 2026 sealed and never
+     queried) plus GroupKFold on client - 24 clients, 40,152 pages, zero
+     overlap. Base rate 0.216. The rule scores precision@50 = 0.492;
+     HistGradientBoosting 0.784, beating the rule in ALL FIVE folds.
+     Honest caveats reported, not hidden: half the gain rides on click
+     history (0.784 -> 0.604 with clicks removed); precision@K quietly
+     favours the model over an impressions-weighted rule; and a readable
+     Random Forest reaches 0.760 with the lowest variance. A Week-4 belief
+     was reversed - near-zero-click pages were the RIGHT picks (90% correct
+     vs the rule's 50%). Permutation importance on held-out data with an
+     injected noise floor; content_type scored exactly 0.0000.
+     Files: w05_model.ipynb, README.txt.
+     (Local copy here is the code version; the executed one with outputs
+      is on GitHub at commit 64d72e1.)
+
+19 - Ship the Ugly One                          [General AI Fluency, 4h]  DONE
+     All three sitemap pages built and live at https://saad-imran-toori.github.io
+     (Home / Proof / Contact), plain HTML + CSS on GitHub Pages, no framework
+     and no build step - the stack I defended in Week 4. Real work only: two
+     DecisAI product captures pulled from my own demo recording (the compliance
+     matrix showing "No match found" + EVIDENCE GAP, and the GO/NO-GO decision
+     screen), plus my executed-notebook outputs for the FlyRank case.
+     First real reader: Mansoor, my DecisAI teammate. The claim PASSED - he
+     described the refusal behaviour back in his own words without prompting.
+     His criticism ("too narrow", "not many projects") is recorded verbatim,
+     and I answered the first with one signposting sentence rather than a
+     technology list, because the absence of that list was what he praised.
+     Honest "still ugly" list: 19 items.
+     Files: site files/, REACTION.md, STILL-UGLY.md, BUILD-NOTES.md.
+
+20 - FL-06 Design Your Personal Agent           [General AI Fluency, 4h]  DONE
+     The design spec for RepoWiz - an agent that drafts my weekly university
+     progress report from evidence it gathers itself, and refuses to state
+     anything it could not verify. The direct upgrade to FL-04's workflow,
+     using the exact gap FL-05 identified: give the gather step tools and a
+     goal so it stops asking me what happened and finds out.
+     Five namespaced tools (four read-only, one write behind confirmation),
+     each with a realistic access plan - including two gaps I named rather
+     than hid: the FlyRank portal has no API, and a Claude Project cannot
+     read my D drive. Six eval cases written BEFORE building, four of them
+     drawn from things that actually happened (the unverified 0.185 figure,
+     a notebook committed unexecuted, the week I tried to close early, the
+     supervisor name change). Guardrails are structural, not promised -
+     there is no send-email, git-push or portal-submit tool, so every
+     irreversible action stays with me. Platform: Claude Project with
+     read-only connectors, justified against n8n, custom GPT and Cowork.
+     Scope itemised to exactly 10 build hours.
+     Files: Agent-Design-Doc.md (committed to the repo under work/Agent-Design/).
+
+21 - Explain It Like You Built It               [General AI Fluency, 2h]  DONE
+     Paid the "never ship a mystery" debt on my own portfolio CSS. Had AI
+     tutor me on three pieces of style.css I had used without fully
+     understanding - the CSS dot-grid background, the ::after green bar in
+     the SI monogram, and clamp() for responsive type - then quizzed me on
+     all six questions before writing anything. Explanation is in my own
+     words and records the two things I got WRONG while learning: I twice
+     said background-size controls dot size (it controls spacing), and I
+     thought only position:absolute was involved when both absolute and
+     relative are, on two different elements.
+     Files: Explain-It-Like-You-Built-It.md.
+
+22 - FL-07 Build the Agent                      [General AI Fluency, 10h]  DONE
+     RepoWiz built and running - Checkpoint 1, the MVP. Built in Cowork as
+     a saved skill, NOT the Claude Project my FL-06 spec chose: the spec had
+     rejected Cowork on a cost assumption that was simply wrong, and the
+     agent-skills course showed that allowed-tools, hooks and subagent skill
+     lists only exist on this side. Deviation documented before building.
+     Narrowest core job only: give it a week, it reads my archive itself and
+     returns every claim marked VERIFIED with its source or UNVERIFIED with
+     a question. Live tool connection = real reads of the D-drive archive.
+     Unprompted, it found TWO real errors in my own INDEX.txt - both the
+     ML-07 and ML-08 entries claimed "(executed)" notebooks when the
+     archived copies had 5 unexecuted cells each. I wrote both lines and had
+     never noticed. Fixed the index, not the agent.
+     Evals: E1 pass, E3 pass (twice, unprompted), E5 partial - it cannot
+     read .docx, which is WHY the spec needed reports pasted in. E2/E4/E6
+     deliberately not self-judged; run live on camera instead and all three
+     held - it refused a figure it could not source (and found where 0.185
+     actually came from), refused to close an unfinished week, and refused
+     to put a third party's email into a public repo without reading it.
+     Honest weakness: nothing broke, so the build log is thin on iteration.
+     Files: BUILD-LOG.md, repowiz-week-evidence-SKILL.md,
+     Recording 2026-08-21 021033.mp4.
+
+23 - PF-04 Personal Website Live on the FlyRank Domain
+                                                [General AI Fluency, 6h]  DONE
+     Site already live over HTTPS at https://saad-imran-toori.github.io from
+     Ship the Ugly One; this task added what the criteria required and the
+     DNS understanding behind it. Stayed on GitHub Pages rather than moving
+     to Netlify - it is explicitly accepted, and switching would contradict
+     the Week-4 Three Roads decision where I chose it for near-zero
+     maintenance and wrote down why.
+     Added: a quiet footer link row on all three pages (LinkedIn, GitHub,
+     CV, WhatsApp, Email) placed below the fold so it does not compete with
+     my single call to action; a "Writing & capstone" section holding space
+     for the Week-8 paper, honestly labelled as empty; and the new CV as a
+     linked PDF.
+     Contact email changed site-wide to saad.imran.xd@gmail.com so the site
+     and the CV agree.
+     No calendar booking link, by choice and stated on the page: I would not
+     check one, so the Contact page routes booking through WhatsApp and
+     promises times back the same day. Recorded as a deliberate deviation.
+     DNS walkthrough written in plain words - what DNS is for, the four-step
+     journey (resolver, nameserver chain, record, response), A vs CNAME, why
+     an alias is safer than an IP, and the apex-domain limitation.
+     Files: DNS-Walkthrough.md; site files updated in folder 19.
+
+     Still open:
+                Domain (6h), Professional Setup and Security Baseline (4h,
+                locked - lead review pending),
+                Week 5 progress report for university
+
+
+WEEK 6  —  4 of 4 assignments done  (+ the AI Fluency Impact Project capstone)
+------------------------------------------------------------------------------
+
+24 - ML-09 Validation and Research Claim Audit  [Machine Learning, 5h]  DONE
+     Submitted 23 Aug 2026. Filled the pre-made skeleton FlyRank shipped in the
+     repo, keeping its five section headings word for word.
+     Two findings from FlyRank's own research report, each with one methodology
+     question framed as "what would make this stronger": Zombie Recovery (does
+     the 90-day impressions window overlap the 30-day recovery window?) and
+     Growth Prediction (the ~96.6K clear movers are 45.5% of the 212.4K active
+     pages - what does the accuracy mean on the population you actually score?).
+     Picked those two because I had committed both errors myself.
+     ML-08 already used GroupKFold, so instead of inventing a confession I built
+     the wrong split deliberately - plain KFold, clients on both sides - with
+     identical rows, features, model, max_iter, K and tie policy.
+       random KFold  : HistGB 0.836, rule 0.560, base 0.246, 17-21 clients shared
+       GroupKFold    : HistGB 0.784, rule 0.492, base 0.216, zero shared
+     The correction that matters: the raw gap is 0.052, but the base rate also
+     moved, so 0.030 of it (57%) is the exam changing rather than skill lost. As
+     lift over base rate the gap is 0.022; as a MULTIPLE of base rate the honest
+     split is ahead, 3.63x against 3.40x. Reporting the raw gap and stopping
+     would have claimed a bigger virtue than I earned.
+     Effect size: Cohen's d 2.04 grouped, 2.96 random. The grouped split has the
+     larger mean advantage but the smaller d, because the folds disagree more.
+     n=5, three folds hold one client each - reported with the caveat attached.
+     Harness proved by injecting ctr_mar: 0.784 -> 1.000.
+     Leakage audit found something ML-08 had not disclosed. My eligibility funnel
+     reads the label month twice. The impr_mar >= 100 floor is trivial - 102
+     pages, and removing it moves the score UP to 0.828. The one that matters is
+     requiring a page to be present in all three months: 979 of 41,234 Feb-
+     eligible pages produced no March row at all. Not patchable - March CTR is a
+     rate and a rate needs a denominator - so it is disclosed as a limitation and
+     the claim is narrowed to "among pages still visible in the outcome month".
+     Four of my own claims rewritten, each with its numbers printed beneath it.
+     Then the public versions were brought into line, because rewriting a claim
+     in a notebook while the old wording stays live is the exact gap this task is
+     about: proof.html corrected, the audit paragraph added, the split comparison
+     added as a screenshot. Two deploy problems caught while verifying - the
+     screenshot had committed as ml09-split.png.png (Windows hides extensions on
+     rename, so the figure was broken), and an UPLOAD-site-repo/ folder had been
+     committed into the site repo, where GitHub Pages was publicly serving a
+     complete stale copy of the site carrying the un-corrected claim AND the old
+     dead mailto: links. Both removed. CV checked, needed no change.
+     Files: NOTES.md here; build_ml09.py in Build Scripts/ (regenerates the
+     finished notebook exactly, ast.parse-validated); the executed notebook with
+     outputs is on GitHub at work/notebooks/w06_validation_audit.ipynb, plus
+     work/outputs/w06_validation_audit_metrics.json.
+
+25 - Make It Do Something                  [General AI Fluency, 4h]  DONE
+     Submitted 23 Aug 2026. One dynamic feature wired end to end on a free tier:
+     a working contact form on the portfolio, using Formspree.
+     Chose the form over the live ML demo the card offers ML interns, for two
+     reasons. The site's only call to action was a mailto: link that silently
+     does nothing for anyone without a mail app registered - the card's own
+     phrase, "a locked door with a great sign on it", described it literally.
+     And the model cannot be demoed publicly: it is trained on client data.
+     The card's Netlify shortcut does not apply - the site is on GitHub Pages,
+     which serves files and cannot receive a POST. Formspree is the card's own
+     linked resource: no server, free tier, 50 submissions a month.
+     Built: the form (three required fields, type="email"); an off-screen
+     _gotcha honeypot so spam is caught without making real people solve a
+     captcha; a success dialog dismissed by a click or Escape, with focus moved
+     in on open and returned to the Send button on close; a quiet green line
+     that survives the dialog being dismissed so a stray click cannot erase the
+     evidence; failure messages that always name my email address and leave the
+     typed text in place. Home and Proof CTAs re-pointed at the form.
+     The form keeps a real action and method, so if the script never runs the
+     browser submits normally. The feature degrades, it does not break.
+     Tested live three ways - empty submission blocked by the browser, invalid
+     address refused, real message arrived in the inbox.
+     Two corrections. I built a thanks.html redirect using Formspree's _next
+     field; it does not work, custom redirects being a paid feature, and the
+     tell was that _subject DID work. Deleted the page rather than leave one
+     nothing could reach, and moved success handling onto the page. That added
+     JavaScript to a site whose footer claimed plain HTML and CSS, so the footer
+     changed too - leaving it would have been the exact failure ML-09 was about.
+     Verification also caught two code comments still describing the old no-JS
+     version. Third time prose-drift has been caught by checking, not memory.
+     Pushed back once on a popup success message, offered a middle option, then
+     built the popup properly when it was asked for again - keeping the
+     persistent green line so dismissing it cannot destroy the evidence. Did not
+     build the requested "are you sure?" step: Enter in a textarea makes a new
+     line, all fields are required, so the accidental-send case is mostly
+     already blocked, and friction on the one page whose job is getting a
+     stranger to make contact is expensive.
+     Explainer written in HIS OWN WORDS as the criteria require - I taught the
+     data flow, quizzed him five questions one at a time, and reviewed two
+     drafts. Draft 1 was accurate but missed two of the three things the card
+     asks for and used action/method/_gotcha unexplained; draft 2 fixed it.
+     Files: NOTES.md here; site files updated in folder 19 (contact.html,
+     index.html, proof.html, style.css, HOW-THE-FORM-WORKS.md) so there is one
+     copy of the site, not two.
+     Live: saad-imran-toori.github.io/contact.html
+
+29 - Open It on Your Phone                      [General AI Fluency, 4h]  DONE
+     Built 26 Aug 2026. The site opened on a real phone, then measured in headless
+     Chromium at 320/390/414/768 px - the card's pass bar says a resized browser
+     does not count, and the phone and the measurements caught different things.
+     Seven real problems. The big one: EVERY page scrolled sideways at EVERY phone
+     width, because the top nav is a flex row with no flex-wrap and "Email" ran off
+     the edge - 29px over at 390px, 99px at 320px, and 58px more on the paper where
+     the Results table is 402px wide and cannot shrink. The fix was already written
+     into .flinks in Week 5, with a comment explaining this exact failure; the top
+     nav had never been given it.
+     The phone found two things no script would flag, because neither is invalid
+     HTML: a bare nav{} selector was leaking display:flex onto the paper's
+     <nav class="toc">, so "CONTENTS" sat BESIDE its list vertically centred instead
+     of above it; and the DecisAI captures are crisp 1400px files that are simply
+     unreadable rendered into 342px, which from the reader's side is the same
+     problem. Rules scoped to header nav; all 10 figures now tap to full size.
+     Also fixed: .fnote failed WCAG AA at 3.04:1 (now #6b7280, 4.63:1 - every other
+     one of the 18 pairs passed); nav links 25px tall, footer 23px, Contents 18px,
+     "CV" 19px wide, all now 30-45px, with nav height unchanged by moving the padding
+     off the <nav> and onto the links; 11 images given intrinsic width/height plus
+     lazy loading. TRAP: adding those attributes to an image styled width:100% makes
+     the attribute height win and every figure stretches - height:auto had to land in
+     the same change. Verified by comparing rendered against intrinsic ratios.
+     NOT done, and recorded rather than claimed: image compression. Re-encoding all
+     eight content images saves 5.2% (35 KB), and every one is already UNDER the
+     ~1544px a retina screen wants for the 772px column. The card assumes a problem
+     this site does not have. Inline links still under 24px were left alone too -
+     WCAG 2.5.8 exempts targets inside a sentence.
+     WHAT WENT WRONG: the first commit uploaded the PRE-FIX copies of four files, so
+     the site briefly carried a fix log describing changes that were not in the files
+     beside it. Caught by hashing each committed file against the built one instead of
+     trusting the commit message. Third time verifying has beaten remembering, after
+     ml09-split.png.png and the stale UPLOAD-site-repo copy.
+     After 0 overflow at all four widths. Files: NOTES.md and FIX-LOG.md here; site
+     files updated in folder 19 and paper.html in folder 27.
+     Live: saad-imran-toori.github.io  ·  FIX-LOG.md live at the same host.
+
+30 - Survive the Crit                           [General AI Fluency, 4h]  DONE
+     Built 31 Aug 2026. Submitted the live portfolio for design review to Zia ur
+     Rehman, a classmate. The two questions were asked BEFORE the proof statement
+     was revealed, so the ten-second test was not led - he reached the refusal
+     behaviour in his own words ("you focus on making AI answer from real evidence
+     instead of making things up") without seeing what the site was meant to say.
+     Feedback sorted into 5 must-fix and 3 nice-to-have, with the two items I was
+     tempted to demote named rather than quietly filed. All five must-fixes are
+     live, each with a before/after entry and verification:
+       1. "I don't know what you'd do for my company" - the umbrella finding
+       2. the offer arrived at the very bottom of the page - moved above the fold
+       3. no clear next step after emailing - "send me the problem, not a meeting
+          request" now answers it, with no response-time promise I might miss
+       4. "I work on the retrieval layer" jargon - rewritten
+       5. "an assistant you can put in front of a client" - an over-claim off a
+          hackathon prototype; narrowed to what is actually proved
+     Item 5 is the one worth remembering. He EXCUSED me from it - "that's okay for
+     an internship portfolio" - and taking that excuse would have been defending
+     the original with the reviewer's own permission. Fixed it anyway, and on the
+     clean re-review he said the narrowed sentence increased his trust.
+     ALSO WORTH RECORDING: his first re-review quoted two sentences that had
+     already been removed, so he had been reading a cached page. Logged as NOT
+     counting rather than folded in as confirmation, and a clean pass requested.
+     The clean pass closed must-fix 1 by the reader who raised it.
+     Phone evidence: phone-01-offer-paragraph.jpeg, phone-02-two-cases-rewrite.jpeg
+     Files: CRIT.md, REVIEW-REQUEST.md, fixed site files/ here.
+     Live: CRIT.md at github.com/Saad-Imran-Toori/Saad-Imran-Toori.github.io
+
+     Still open this week:
+                General AI Fluency - Impact Project capstone (12h)
+                (deferred - decided to run the ML track and the Week-8 ML capstone
+                 first. Both tracks are already past the five-assignment bar for a
+                 certificate; what is NOT skippable is one capstone per track.)
+
+
+WEEK 7  —  1 of 3 done, 1 deployed but NOT yet submitted  (Plant Your Flag deferred)
+------------------------------------------------------------------------------
+
+26 - ML-10 Content Action Playbook              [Machine Learning, 4h]  DONE
+     Submitted 25 Aug 2026. Turns the validated model into the instruction sheet
+     an editor uses on Monday morning - and becomes the recommendations section
+     of the Week-8 paper, so its exports are what the paper cites.
+     Three decisions first: queue built from OUT-OF-FOLD scores so its precision
+     is measured not borrowed; archetypes derived from reason codes, not position
+     tiers (ML-08's top 50 came only from page_1/top_3, so tiers would ship three
+     empty rows); reason codes rule-derived from the page's own February numbers
+     so an editor can check each by opening the page.
+     40,152 pages, 24 clients, base rate 0.225. The best result is what the queue
+     sets ASIDE: 20,061 pages (50%) are watch_only at 0.083 under-capture. Seven
+     archetypes, none empty, each with an action, an owner and a rough effort.
+     precision@K: 0.900/0.950/0.967/0.940/0.830/0.820 at K=10/20/30/50/100/200.
+     At K=50 that is 47 real finds and 3 wasted hours; at K=100, 83 and 17.
+     Biggest operational caveat: the top 50 draws from 8 of 24 clients and ONE
+     client holds 44% of it.
+     Three errors of mine caught before submission:
+       1. Nearly claimed an improvement that did not exist. This notebook's
+          precision@50 is 0.940, ML-08's is 0.784 - same model, same rows, but
+          pooled takes the best 50 of 40,152 while per-fold takes the best 50 of
+          ~8,030 five times. Both now printed with a statement that they are not
+          interchangeable. Per-fold reproduced ML-08 exactly (0.90/0.78/0.84/
+          0.80/0.60), which is the proof the model is unchanged.
+       2. Built a drift alarm that could never fire. Page impressions move with
+          PSI 1.346 between two ORDINARY months - five times past the 0.25 major-
+          shift line - so "twice the normal move" gave a trigger of 2.69.
+          Impressions demoted to a data-quality check; ctr_feb (PSI 0.031) is the
+          sentinel, trigger 0.10. Measuring the baseline is what caught it.
+       3. Recommended refreshing declining pages, then overstated the correction.
+          Every momentum bucket sits 0.198-0.242 around a 0.225 base: momentum
+          barely separates either way. Below-tier conversion is what separates
+          pages. Both tables now in the notebook, read together.
+     Plus: self-check had ticked "every archetype non-empty" without measuring it
+     (now printed), and the metrics JSON still carried the overstated decay
+     wording after the prose was fixed (corrected).
+     TRAP WORTH REMEMBERING FOR THE CAPSTONE: Colab's "Save a copy in GitHub"
+     commits the NOTEBOOK ONLY. Figures, JSON and CSV written by the notebook stay
+     in the Colab VM and vanish. The first commit looked complete and was missing
+     both required figures and the receipts. Download from the Colab Files panel
+     and upload separately. Week 8 will write exports too.
+     PAIR Guidebook resource was NOT used - it is a JS-rendered app, plain fetch
+     returns an empty shell, Chrome extension not connected. Left out rather than
+     guessed at; noted as a gap to revisit before the paper.
+     Files: NOTES.md here; build_ml10.py in Build Scripts/. On GitHub:
+     work/notebooks/w07_action_playbook.ipynb (executed), work/figures/ (2 PNGs),
+     work/outputs/w07_playbook_metrics.json. The queue CSV is generated but NOT
+     committed - work/**/*.csv is blocked by the leak-guard by design.
+
+31 - Break Your Own Site                        [General AI Fluency, 2h]
+     BUILT 6 Sep 2026, DEPLOYED 7 Sep 2026 - still NOT SUBMITTED.
+     For one day this entry read "NOT DEPLOYED", on purpose: BREAK-LOG.md marked
+     six fixes as done while none of them were on the live site, so until they
+     were committed that log described a site that did not exist. All nine files
+     went up on 7 Sep in one commit alongside the FlyRank credential work, and
+     were verified afterwards rather than assumed:
+       - opengraph.xyz: 0 errors, 10 passes, the share card renders
+       - validator.schema.org: Person, 0 errors, 0 warnings
+       - robots.txt, sitemap.xml and every page fetched live and checked by hand
+     The two title warnings opengraph.xyz raised were real - the card title spent
+     22 of its 60 characters repeating my name, which pushed the claim itself past
+     the truncation point - so the card titles were shortened and the <title> tags
+     left alone, because that is what a search result needs.
+
+     The worst finding is findability. Searched the exact string
+     "saad-imran-toori.github.io" in quotes: ten results came back and NOT ONE
+     was my site. Not badly ranked - absent. Three causes, all addressed in the
+     built files: no sitemap.xml, no robots.txt, and no canonical URL (the home
+     page answers at both / and /index.html, splitting any signal across two
+     addresses).
+
+     Second finding: there was NO social-share preview on any of the four pages.
+     Not one Open Graph or Twitter Card tag. Pasting a link into WhatsApp,
+     LinkedIn or Slack produced a bare URL - no title, no description, no image.
+     Built: the full OG + Twitter set on all four pages, plus og-image.png
+     (1200x630) in the Week-3 identity kit's own palette and typefaces, and a
+     JSON-LD Person block on the home page.
+
+     One real bug, found by reading my own code. The spam honeypot was hidden
+     ONLY by .gotcha in style.css. If that stylesheet ever fails to load the
+     field becomes VISIBLE in the middle of the contact form under the label
+     "Leave this field empty" - and a real person who fills it in has their
+     message silently discarded by Formspree while my own JavaScript still shows
+     them the success dialog. It fails invisibly and lies about it. Hardened with
+     an inline offset plus aria-hidden so it survives the stylesheet not arriving.
+
+     Verified negative: all thirteen internal href/src values across Home, Proof
+     and Contact resolve to a file that exists in the repo. No broken internal
+     links - recorded as a finding, because "I checked and found none" and "I did
+     not check" look identical in a report that only lists problems.
+
+     Known limitations named rather than hidden: the site is not in any index
+     today and a sitemap makes indexing POSSIBLE, not immediate (re-test in two
+     weeks, not today); Formspree's free tier caps at 50 messages a month;
+     type="email" accepts a@b; no maxlength on the message field.
+
+     DONE since:
+       - the built files are committed and live (7 Sep)
+       - the rendered share preview checked in a debugger (opengraph.xyz)
+
+     STILL TO DO before this can be submitted:
+       - browser break-testing: empty submit, garbage email, double-fast submit,
+         JS disabled, offline (section 3.2 is read from the code, not watched)
+       - a browser I have not tested (Firefox or Edge)
+       - every external link clicked
+       - PageSpeed Insights, mobile and desktop
+       - the hardening review - the fourth item of the brief, needs a person
+       - submit the sitemap in Google Search Console, then re-run the findability
+         test. NOT today: a sitemap makes indexing possible, not immediate. The
+         honest re-test is two weeks out, i.e. from ~21 Sep.
+     Files: BREAK-LOG.md and site files/ here.
+
+     Still open this week:
+                Plant Your Flag: Domain + Badge (AIF, 20h) - deferred
+
+
+WEEK 8  —  the ML track finished at 10/10
+------------------------------------------------------------------------------
+
+27 - ML-11 Ship the Paper                       [Machine Learning, 6h]  DONE
+     Submitted 25 Aug 2026. The research paper, live and public:
+       https://saad-imran-toori.github.io/paper.html
+     Deployed on my own portfolio site rather than the repo's docs/ folder - the
+     card allows either, Pages already worked there, and my home page had
+     publicly promised since Week 5 that the capstone "will be published here".
+     One self-contained HTML file, all CSS inline. He asked for it in two places;
+     two live copies of a paper is the UPLOAD-site-repo trap with higher stakes,
+     so the repo gets the source archived at work/paper/ and there is exactly one
+     deployed URL, recorded in submission/paper_url.txt.
+     All nine required sections, including the two the card says people forget -
+     the five-sentence Abstract at the top and the flyrank.ai data credit at the
+     bottom. The CI literally fetches the deployed page and greps it for that
+     link, so a paper without it fails the build.
+     Read the Pineau ML Reproducibility Checklist in full for the research half
+     hour the card requires. It added four things we had never stated anywhere:
+     dependency versions, exact number of runs, runtime, and compute. Section 7
+     is now audited against it item by item. (Web search hit its session limit
+     before the second external resource - one of two read, and said so.)
+     The paper argues against itself where the evidence does: half the margin is
+     borrowed from click history; a printable depth-3 tree gets 0.692 and a
+     random forest 0.760 with less variance ("asked to defend one model in a
+     room, I would defend the forest"); the split claim I had made for weeks was
+     57% inflated; 979 pages cannot be scored at all; momentum is a negative
+     result; "nothing here is causal" stated outright.
+     Three things went wrong. The abstract went to six sentences when the card
+     says five - merged rather than hoping nobody counted. Figures 4 and 5
+     shipped BROKEN because the ML-10 charts were committed to the internship
+     repo while the paper lives on the site repo - two separate repositories -
+     and it took asking three times for a visual check to catch it. NOTE FOR
+     NEXT TIME: copied page text renders images as alt text whether or not they
+     loaded, so a paste of the page proves nothing about figures. And
+     paper_url.txt read as an unfilled placeholder on three fetches when it was
+     actually correct - the raw CDN again.
+     Files: NOTES.md and paper.html here; build script none (hand-written HTML).
+
+28 - ML-12 Tell the Story                       [Machine Learning, 2h]  DONE
+     Submitted 25 Aug 2026. COMPLETES THE ML TRACK AT 10/10.
+     Three parts. First, the case study - which the card says lives INSIDE the
+     paper, not beside it. Mine did not: the introduction opened with a generic
+     editor and never named what FlyRank actually does. Fixed by rewriting the
+     abstract's opening and adding "Where this problem comes from" to Section 1 -
+     FlyRank publishes content into client sites and flags pages with
+     hand-written threshold rules that work but run out where signals get
+     tangled, and no trained model has replaced them. That gap is the paper.
+     Second, a five-minute demo outline in capstone.ipynb's closing cells, timed
+     in five blocks, with the honest result carrying its caveat in the same
+     breath and closing on the limit rather than the win.
+     Third, two shareable cuts: a social post about the methodology (opens "I
+     spent a week proving my own model was less impressive than I'd said") and a
+     three-sentence employer summary whose third sentence is spent entirely on
+     what the work cannot claim.
+     capstone.ipynb mirrors the paper and deliberately does NOT re-scan the
+     warehouse - w05/w06/w07 already do that. Its one code cell reads the
+     committed metrics receipts so the paper's numbers are shown to TRACE to a
+     file rather than being retyped.
+     THE CI FAILURE, WORTH RECORDING. Committing the paper URL flipped the repo
+     into "final" state, which escalates one leak-guard check from warning to
+     error: deliverable notebooks must carry outputs. Two failed, and neither was
+     today's work - w03_feature_leakage_check.ipynb and w04_signal_audit.ipynb
+     were untouched ML-05/ML-06 skeletons that had sat in the repo for weeks. The
+     work for those assignments was done in the filled notebooks, so the
+     skeletons were unused duplicates and were deleted. All checks then passed.
+     Running them would NOT have fixed it: comment-only cells produce an empty
+     outputs list, which the check counts as no outputs. The check cannot be
+     satisfied by execution alone. It also holds its fire until a track claims to
+     be finished - shipping the paper is what made it speak up.
+     Files: NOTES.md here; build_capstone.py in Build Scripts/. On GitHub:
+     work/notebooks/capstone.ipynb, executed with outputs.
+
+     TWO LESSONS FOR THE CAPSTONE:
+       - Colab's "Save a copy in GitHub" commits the NOTEBOOK ONLY. Anything the
+         notebook writes to disk stays in the VM. Bit us twice today.
+       - When raw.githubusercontent.com disagrees with github.com, trust
+         github.com. The raw CDN served stale content five times in three days,
+         once showing a mandatory submission file as an unfilled placeholder.
+
+     ML TRACK CLOSED. The capstone was accepted and the Machine Learning
+     Certificate of Completion was issued on 7 September 2026 - see CERTIFICATION
+     below. June 2026 was sealed throughout and was never queried in any notebook
+     in this project.
+
+     Still open:
+                AI Fluency track - 3 assignments deferred (Plant Your Flag, and
+                Break Your Own Site is DEPLOYED but NOT SUBMITTED, see entry 31), plus
+                the AI Fluency Impact Project capstone, which is NOT skippable if
+                the second certificate is wanted.
+
+
+PROGRAMME CLOSED  —  university viva passed, 13 September 2026
+-------------------------------------------------------------
+The CUST internship requirement is complete. Final submissions:
+
+  Student Report Forms/Internship-Report-Muhammad-Saad-Imran-Complete.pdf
+      The 22-page Summer Internship Report (SE4103). Title page, acknowledgement,
+      clickable contents, Weeks 1-8 day by day, conclusion, references.
+      14 figures: 9 screenshots from these week folders, 3 charts exported from the
+      notebooks (ml09-split, ml10_precision_at_k, ml10_archetype_mix) and 2 built for
+      the report (weekly hours, model vs frozen baseline).
+      Week periods match the four fortnightly report forms exactly:
+      13-19 Jul / 20-26 Jul / 27 Jul-2 Aug / 3-8 Aug / 9-13 Aug / 14-17 Aug /
+      18-22 Aug / 23-26 Aug.
+      NOTE: the course code is SE4103, not SE4100. The first draft had it wrong and it
+      was corrected before submission - the .docx beside it carries the correction too.
+
+  Student Report Forms/Internship-Report-Muhammad-Saad-Imran-Complete (editable source).docx
+      The Word source of the above, for any future edit. Rebuild target if the PDF
+      ever needs changing - do not re-type it.
+
+  Notes/FlyRank-Project-Revision-Sheet.pdf
+      Two-page revision sheet written for the viva. Page 1: the project in six steps
+      (question -> frozen rule -> model -> grouped split -> audit -> playbook -> paper),
+      the numbers as "out of 50", R^2 vs precision@50, and four wording traps.
+      Page 2: the results table with how to read precision@20 vs precision@50.
+
+STILL OPEN (FlyRank side, not CUST):
+  - AI Fluency Impact Project capstone - deferred, not submitted.
+  - Break Your Own Site (entry 31) - deployed 7 Sep, still NOT submitted.
+  - Plant Your Flag: Domain + Badge - deferred.
+  The Machine Learning track is closed at 10/10 and certified; the AI Fluency track is
+  not. The university requirement does not depend on either.
+
+
+CERTIFICATION  —  issued 7 September 2026
+-----------------------------------------
+The Machine Learning track closed at 10/10 and the capstone was reviewed and
+accepted. FlyRank issued three documents on 7 September 2026; all three are in
+Certification/ and all three are public and independently verifiable.
+
+  Credential ID : FR-D11-F1DDA-CDAA7
+  Verify at     : https://internship.flyrank.ai/verify/FR-D11-F1DDA-CDAA7
+                  ?first_name=Muhammad
+  Supervisor of record : Arijana Ibrović, Director of Internship Program
+
+1. FlyRank AI - Certificate of Completion (Machine Learning).pdf
+   The certificate itself. Names the Machine Learning track and carries the
+   credential ID and the verify URL.
+
+2. FlyRank AI - Final Internship Report and Evaluation.pdf
+   FlyRank's own end-of-programme record, and the most useful of the three for
+   any employer who wants detail. Confirms: 32 completed assignments, capstone
+   accepted (1/1), 1 attended live session, 6 Anthropic Academy courses. Page 2
+   carries the supervisor's evaluation of participation, work quality,
+   communication and professionalism, plus formal programme approval.
+
+3. FlyRank AI - Recommendation Letter.pdf
+   From Arijana Ibrović. Names the capstone by title - "Google Search Ranking &
+   Discoverability Capstone" - and states it was reviewed and accepted by the
+   lead track mentor.
+
+DATE TRAP, WORTH REMEMBERING. These three documents give the participation
+period as 1 July - 7 September 2026, but 7 September is the ISSUE date, not the
+last working day. The internship confirmation letter and every CUST form use the
+real end date, 26 August 2026. So:
+    LinkedIn / CV experience entry  -> July to August 2026 (the actual work)
+    LinkedIn certification issued   -> September 2026 (when it was issued)
+    CUST paperwork                  -> 1 July - 26 August 2026
+Keeping these straight matters because the credential URL is public: anyone can
+open it and compare the dates against the profile.
+
+Added to LinkedIn on 7 September 2026 as one certification entry with all three
+documents attached as media, skills: Machine Learning, Python, scikit-learn,
+SQL, Data Analysis.
+
+
+OTHER
+-----
+Anthropic Certificates/ — AI Fluency Framework & Foundations, Claude 101,
+    Introduction to Claude Cowork.
+flyrank-internship-confirmation-letter-muhammad-saad-imran.pdf — official
+    FlyRank confirmation letter, also sent by FlyRank to my university email
+    and manager. This is the document with the CORRECT end date, 26 Aug 2026.
+
+
+CAPSTONE
+--------
+Chosen lane: Lane 4 — CTR / Engagement Opportunity Scoring.
+Question: which visible pages under-capture clicks compared with similar
+pages, and should an editor review them first?
+How the paper was assembled: ML-02 = Introduction/problem; ML-03 = Methodology
+(task framing); ML-04 = Data section; ML-07 = the frozen baseline; ML-08 = the
+model; ML-09 = the validation audit; ML-10 = recommendations; ML-11 = the paper
+itself; ML-12 = the case study folded back into it.
+
+SHIPPED. Live and public at https://saad-imran-toori.github.io/paper.html
+Source archived in the repo at work/paper/; deployed URL recorded in
+submission/paper_url.txt. Exactly one deployed copy, by design.
+
+Headline result: HistGradientBoosting precision@50 = 0.784 against the frozen
+rule's 0.492, beating it in all five folds, GroupKFold on client (24 clients,
+40,152 pages, zero overlap), base rate 0.216. The caveats are in the paper, not
+hidden: half the margin rides on click history (0.784 -> 0.604 without it); a
+random forest reaches 0.760 with lower variance; the split claim was 57%
+inflated until the Week-6 audit corrected it; 979 pages cannot be scored at all;
+momentum is a negative result; nothing here is causal.
